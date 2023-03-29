@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>GPT Conversational App Engine: {{APP_NAME}}</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <meta charset="UTF-8"/>
+</head>
+<body>
+    <div class="container">
+        <div class="header"><h1>{{APP_NAME}}</h1></div>
+        <div class="content">
+            <div class="chats-list">
+                <div class="chats-list-title">{{CHATS_LIST_TITLE}}</div>
+                <button onclick="appEngine.newChat()">{{NEW_CHAT}}</button>
+                <ul id="chatslist">
+                </ul>
+            </div>
+            <div class="chat-messages">
+                <ul id="chatmessages">
+                    
+                </ul>
+                <form onsubmit="appEngine.postMessage(); return false;">
+                    <textarea id="message" rows="3"></textarea>
+                    <input id="submitbutton" type="submit" value="Submit" />
+                    <button id="recordbutton" onmousedown="appEngine.speechRecognition?.start()" onmouseup="appEngine.speechRecognition?.stop()" onclick="return false">🎤</button>
+                </form>
+            </div>
+            <div class="content-preview" id="contentpreview">{{CONTENT_PREVIEW_PLACE_HOLDER}}</div>
+        </div>
+    </div>
+	<script src="script.js"></script>
+</body>
+</html>
