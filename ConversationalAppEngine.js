@@ -9,7 +9,7 @@ export class ConversationalAppEngine {
 
     constructor(appClass, apiKey) {
         this.openai = new OpenAIApi(new Configuration({
-            apiKey: process.env.OPENAI_API_KEY, //'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',
+            apiKey: process.env.OPENAI_API_KEY,
         }));
 
         this.app = new appClass(this);
