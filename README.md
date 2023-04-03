@@ -5,7 +5,7 @@ Conversational App Engine is an open-source engine that allows developers to qui
 ## History
 Conversational App Engine was initially created as a demonstration of how OpenAI's completion API can be used to build a form designer. However, we quickly realized that the same technology could be applied to a wide range of use cases. Our goal is to provide developers with an easy-to-use engine that can improve their app's user experience with conversational AI.
 
-![History-Form-Designer](https://user-images.githubusercontent.com/129025554/229409624-6dad9547-fcc8-4fca-9b5b-adc39f38361c.gif)
+![History-Form-Designer-slower-80](https://user-images.githubusercontent.com/129025554/229411348-b2d4da89-bce9-483d-93b0-29ec698172c6.gif)
 
 
 # How to use
