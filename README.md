@@ -5,6 +5,8 @@ Conversational App Engine is an open-source engine that allows developers to qui
 ## History
 Conversational App Engine was initially created as a demonstration of how OpenAI's completion API can be used to build a form designer. However, we quickly realized that the same technology could be applied to a wide range of use cases. Our goal is to provide developers with an easy-to-use engine that can improve their app's user experience with conversational AI.
 
+![History-Form-Designer](https://user-images.githubusercontent.com/129025554/229409624-6dad9547-fcc8-4fca-9b5b-adc39f38361c.gif)
+
 
 # How to use
 To use Conversational App Engine, you will need to have Node.js and npm installed on your computer. You will also need an OpenAI API key to access the completion API. Once you have these prerequisites, you can clone this project using Git or download it as a zip file.
