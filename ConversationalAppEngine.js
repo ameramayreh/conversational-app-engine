@@ -7,13 +7,18 @@ export class ConversationalAppEngine {
     defaultMesages = [];
     userMessages = {};
 
-    constructor(appClass, apiKey) {
+    constructor(appClass) {
         this.openai = new OpenAIApi(new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
         }));
 
         this.app = new appClass(this);
         this.defaultMesages = this.app.getDefaultMessages();
+
+        if(!fs.existsSync('./data/')) {
+            fs.mkdirSync('./data/');
+        }
+
         this.loadData();
     }
 
