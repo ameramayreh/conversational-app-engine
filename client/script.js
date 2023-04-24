@@ -178,8 +178,26 @@ class ConversationalAppEngineClient {
 
     setContentPreview(html, formIndex) {
         this.setCurrentContentMessage(formIndex);
-        this.contentPreview.innerHTML = html;
+        this.setInnerHTML(this.contentPreview, html);
     }
+
+    setInnerHTML(elm, html) {
+        elm.innerHTML = html;
+        
+        Array.from(elm.querySelectorAll("script"))
+          .forEach( oldScriptEl => {
+            const newScriptEl = document.createElement("script");
+            
+            Array.from(oldScriptEl.attributes).forEach( attr => {
+              newScriptEl.setAttribute(attr.name, attr.value) 
+            });
+            
+            const scriptText = document.createTextNode(oldScriptEl.innerHTML);
+            newScriptEl.appendChild(scriptText);
+            
+            oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+        });
+      }
 
     setCurrentContentMessage(contentIndex) {
         for (let i = 0; i <  this.contentList.length; i++) {

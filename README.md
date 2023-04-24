@@ -57,3 +57,13 @@ If you don't have git installed. You can download the prject from [here](https:/
 ## Run your project
 5- Run node ./index.js in the project directory
 6- Navigate to http:/localhost:3000/
+
+# Demos
+Currently this project includes the following demo apps:
+
+## Quote Image Generator (Default)
+The Quote Image Generator is an application that uses GPT to create wallpapers in SVG format. These wallpapers feature suggested quotes that are relevant to a specified topic. It's important to note that sometimes the generated images may have rendering issues. However, you can simply request to fix them in the conversation. To give you an idea of what these wallpapers look like, here's an example of a few generated SVGs:
+
+
+## Todo Tasks Manager
+The Todo Tasks Manager is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
