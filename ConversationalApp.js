@@ -1,3 +1,7 @@
+
+
+import yaml from 'js-yaml';
+
 class ConversationalApp {
     appName = 'My App';
     chatListTitle = 'My Chats';
@@ -14,6 +18,9 @@ class ConversationalApp {
     getChatNameFromMessage(message) {return 'Unknown';};
     getTextMessage(message) {return message;}
     getAppContent(message) {return '<h1>No Content</h1>';}
+    parseYaml(yamlStr) {
+        return yaml.load(yamlStr);
+    }
 }
 
 export {ConversationalApp};
