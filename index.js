@@ -1,4 +1,4 @@
-import { QuoteImageGenerator } from './apps/QuoteImageGenerator.js';
+import { QuizGenerator } from './apps/QuizGenerator.js';
 import {ConversationalAppEngine} from './ConversationalAppEngine.js';
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -8,7 +8,7 @@ import fs from 'fs';
 const port = 3000;
 
 
-const engine = new ConversationalAppEngine(QuoteImageGenerator);
+const engine = new ConversationalAppEngine(QuizGenerator);
 
 const app = express();
 app.use(bodyParser.json());
