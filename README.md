@@ -1,5 +1,5 @@
 # About
-Conversational App Engine is an open-source engine that allows developers to quickly implement chat based apps using OpenAI's completion API. With Conversational App Engine, developers can focus on their app's use case while leveraging the power of conversational AI to handle the chat management.
+Conversational App Engine is an open-source engine that allows developers to quickly implement chat based apps using OpenAI's completion API. With Conversational App Engine, developers can focus on their app's use case while leveraging the power of Conversational App Engine to handle the chat management.
 
 
 ## History
@@ -63,7 +63,15 @@ Currently this project includes the following demo apps:
 
 ## Quote Image Generator (Default)
 The Quote Image Generator is an application that uses GPT to create wallpapers in SVG format. These wallpapers feature suggested quotes that are relevant to a specified topic. It's important to note that sometimes the generated images may have rendering issues. However, you can simply request to fix them in the conversation. To give you an idea of what these wallpapers look like, here's an example of a few generated SVGs:
+![quote - failure](https://user-images.githubusercontent.com/129025554/233998565-b5e51ef3-e3e9-42bd-af25-f283f2885d29.svg)
+
+![quote - success](https://user-images.githubusercontent.com/129025554/234000131-793d5b14-3404-4a09-8eeb-314e6dcb8c64.svg)
+
+![quote - life](https://user-images.githubusercontent.com/129025554/233998665-66b3552c-e6f5-4546-bb47-32e93ccb6494.svg)
 
 
 ## Todo Tasks Manager
 The Todo Tasks Manager is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
+
+![todo-app](https://user-images.githubusercontent.com/129025554/233999585-ee9403db-11f4-46d1-a5b1-1dd5f90292ff.PNG)
+
