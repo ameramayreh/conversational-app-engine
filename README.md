@@ -1,7 +1,6 @@
 # About
 Conversational App Engine is an open-source engine that allows developers to quickly implement chat based apps using OpenAI's completion API. With Conversational App Engine, developers can focus on their app's use case while leveraging the power of Conversational App Engine to handle the chat management.
 
-
 ## History
 Conversational App Engine was initially created as a demonstration of how OpenAI's completion API can be used to build a form designer. However, we quickly realized that the same technology could be applied to a wide range of use cases. Our goal is to provide developers with an easy-to-use engine that can improve their app's user experience with conversational AI.
 
@@ -21,9 +20,11 @@ Once you have created your app, import it into the index.js file and use it to i
 * [Nodejs and npm](https://nodejs.org/en/download)
 * [Git (Optional)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
-## Set the environment variable OPENAI_API_KEY to your openai api key
+## [1] Set the environment variable OPENAI_API_KEY to your openai api key
+You need to obtain an “OpenAI” API key from https://platform.openai.com/account/api-keys and set the OPENAI_API_KEY environment variable. This will allow the app to make API calls to OpenAI.
 
-## Clone this project
+
+## [2] Clone this project
 ```
 git clone https://github.com/david-m-s/conversational-app-engine.git
 cd conversational-app-engine
@@ -31,7 +32,7 @@ npm install
 ```
 If you don't have git installed. You can download the prject from [here](https://github.com/ameramayreh/conversational-app-engine/archive/refs/heads/main.zip)
 
-## Implement your app
+## [3] Implement your app
 1- Crate a class that extends ConversationApp in the apps directory
 2- Implement the following methods:
 - getDefaultMessages: an array of instructions that tells GPT about its role and the expected response. Format [{"role": "system", "content": "You are ABC asesseten, you provide help in..."}, {"role": "user", "content": "Your responses should be structured in yaml format"}, ...]
@@ -54,14 +55,19 @@ If you don't have git installed. You can download the prject from [here](https:/
   const engine = new ConversationalAppEngine(MyApp);
  ```
 
-## Run your project
+## [4] Run your project
 5- Run node ./index.js in the project directory
 6- Navigate to http:/localhost:3000/
+
 
 # Demos
 Currently this project includes the following demo apps:
 
-## Quote Image Generator (Default)
+## Quiz Generator (Default)
+The Quiz Generator is an application that harnesses the power of GPT technology to effortlessly create a quiz based on any given paragraph of text. Users can easily generate a comprehensive quiz that tests their knowledge and comprehension of the subject matter contained within the text. The generated quiz can then be exported in both HTML and GIFT formats:
+
+
+## Quote Image Generator
 The Quote Image Generator is an application that uses GPT to create wallpapers in SVG format. These wallpapers feature suggested quotes that are relevant to a specified topic. It's important to note that sometimes the generated images may have rendering issues. However, you can simply request to fix them in the conversation. To give you an idea of what these wallpapers look like, here's an example of a few generated SVGs:
 ![quote - failure](https://user-images.githubusercontent.com/129025554/233998565-b5e51ef3-e3e9-42bd-af25-f283f2885d29.svg)
 
@@ -74,4 +80,3 @@ The Quote Image Generator is an application that uses GPT to create wallpapers i
 The Todo Tasks Manager is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
 
 ![todo-app](https://user-images.githubusercontent.com/129025554/233999585-ee9403db-11f4-46d1-a5b1-1dd5f90292ff.PNG)
-
