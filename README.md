@@ -61,6 +61,7 @@ Currently this project includes the following demo apps:
 
 ## Quiz Generator (Default)
 The Quiz Generator is an application that harnesses the power of GPT technology to effortlessly create a quiz based on any given paragraph of text. Users can easily generate a comprehensive quiz that tests their knowledge and comprehension of the subject matter contained within the text. The generated quiz can then be exported in both HTML and GIFT formats:
+![Quiz-Generator](https://user-images.githubusercontent.com/129025554/234749558-28ec7c9f-805e-4e42-9886-74f5e0872faa.PNG)
 
 
 ## Quote Image Generator
