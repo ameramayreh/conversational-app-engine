@@ -51,9 +51,13 @@ If you don't have git installed. You can download the prject from [here](https:/
 4- Overwrite the `temperature` property if needed, default is 1, valid values are between 0 and 2 inclusive
 
 ## [4] Run your project
-5- Run node ./index.js in the project directory
-6- Navigate to http:/localhost:3000/
-7- Check your app in the apps drop down menu beside the current app name.
+1- Run node ./index.js in the project directory
+
+2- Navigate to http:/localhost:3000/
+
+3- Check your app in the apps drop down menu beside the current app name.
+
+![AppsMenu](https://user-images.githubusercontent.com/129025554/235294471-75ba27f4-4109-4cc2-81d4-6d38ef93ec5f.PNG)
 
 
 # Demos
