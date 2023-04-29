@@ -77,7 +77,8 @@ The Quote Image Generator is an application that uses GPT to create wallpapers i
 ![quote - life](https://user-images.githubusercontent.com/129025554/233998665-66b3552c-e6f5-4546-bb47-32e93ccb6494.svg)
 
 
-## Todo Tasks Manager
-The Todo Tasks Manager is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
+## Todo Assistant
+The Todo Assitant is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
 
-![todo-app](https://user-images.githubusercontent.com/129025554/233999585-ee9403db-11f4-46d1-a5b1-1dd5f90292ff.PNG)
+![todo-app](https://user-images.githubusercontent.com/129025554/235294800-4dec094d-4982-463e-8b4b-338097037581.PNG)
+
