@@ -48,7 +48,7 @@ export class QuizGenerator extends ConversationalApp {
             return null;
         }
 
-        let quizHtml = '<div id="quiz"><div id="mark" class="circle-sketch-highlight"> </div><form onsubmit="void(this.parentElement.classList.toggle(\'answerd\')); calculateMark(); return false;" onreset="resetQuestions(); void(this.parentElement.classList.remove(\'answerd\'));"><h1 id="quiztitle">' + quizInfo.QuizTitle + '</h1><ul>';
+        let quizHtml = '<div id="quiz"><div id="mark" class="circle-sketch-highlight"> </div><form onsubmit="void(this.parentElement.classList.toggle(\'answerd\')); calculateMark(); return false;" onreset="resetQuestions();"><h1 id="quiztitle">' + quizInfo.QuizTitle + '</h1><ul>';
         const questions = quizInfo.Questions || [];
         let questionNumber = 0;
         for(let question of questions) {
@@ -241,6 +241,7 @@ export class QuizGenerator extends ConversationalApp {
         }
 
         function resetQuestions(){
+            document.getElementById('quiz').classList.remove('answerd');
             var correctAnswers = document.querySelectorAll('#quiz .qc');
             correctAnswers.forEach((element) => {
                 element.classList.remove('qc');
