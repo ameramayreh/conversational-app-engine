@@ -32,6 +32,42 @@ body {
     height: 70px;
 }
 
+.header h1 a {
+    cursor: pointer;
+}
+
+#appsmenu {
+    display: none;
+    position: absolute;
+    background-color: #FFF;
+    border: 1px solid #ffa500;
+    border-radius: 0 0 5px 5px;
+    flex-direction: column;
+    margin-top: -3px;
+    border-top: none;
+}
+#appsmenu a {
+    display: block;
+    margin-bottom: 2px;
+    padding: 0 10px;
+    text-decoration: none;
+    color: #000000AA;
+}
+
+#appsmenu a.current {
+    color: #000000DD;
+    font-weight: 800;
+    cursor: default;
+}
+
+#appsmenu a:hover, #appsmenu a:active, #appsmenu a:focus {
+    background-color: #ffa50066;
+}
+
+#appsmenu.shown {
+    display: inline-flex;
+}
+
 .content {
     width: 100%;
     flex-grow: 5;
@@ -43,7 +79,7 @@ body {
 }
 
 .content>div {
-    border: 1px solid orange;
+    border: 1px solid #ffa500;
     height: 100%;
 }
 

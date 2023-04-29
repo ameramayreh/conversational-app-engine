@@ -7,7 +7,9 @@
 </head>
 <body>
     <div class="container">
-        <div class="header"><h1>{{APP_NAME}}</h1></div>
+        <div class="header"><h1>{{APP_NAME}} <a tabindex="0" onclick="appEngine.toggleAppsMenu()"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" data-supported-dps="16x16" fill="currentColor" class="mercado-match" width="16" height="16" focusable="false">
+            <path d="M8 11L3 6h10z" fill-rule="evenodd"></path>
+          </svg></a></h1><div id="appsmenu"></div></div>
         <div class="content">
             <div class="chats-list">
                 <div class="chats-list-title">{{CHATS_LIST_TITLE}}</div>

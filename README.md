@@ -48,16 +48,12 @@ If you don't have git installed. You can download the prject from [here](https:/
 - contentPreviewPlaceholder
 - chatStartInstruction
 
-4- Import and use your class in the index.js file
- ```
-  import { MyApp } from './apps/MyApp.js';
-  ...
-  const engine = new ConversationalAppEngine(MyApp);
- ```
+4- Overwrite the `temperature` property if needed, default is 1, valid values are between 0 and 2 inclusive
 
 ## [4] Run your project
 5- Run node ./index.js in the project directory
 6- Navigate to http:/localhost:3000/
+7- Check your app in the apps drop down menu beside the current app name.
 
 
 # Demos

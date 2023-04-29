@@ -84,7 +84,7 @@ class ConversationalAppEngineClient {
     }
 
     getCurrentChatId() {
-        let chatid = localStorage.getItem(this.getUserId() + "-current-chat-id");
+        let chatid = localStorage.getItem(this.getChatIdLocalStorageKey(this.getUserId()));
         if (!chatid) {
             chatid = this.newChat();
         }
@@ -119,7 +119,7 @@ class ConversationalAppEngineClient {
     }
 
     setCurrentChatId(chatid) {
-        localStorage.setItem(this.getUserId() + "-current-chat-id", chatid);
+        localStorage.setItem(this.getChatIdLocalStorageKey(this.getUserId()), chatid);
     }
 
     clearChat() {
@@ -287,10 +287,11 @@ class ConversationalAppEngineClient {
                     this.addChatItem(chatItem.id, chatItem.name);
                 }
 
-                let chatid = localStorage.getItem(userid + "-current-chat-id");
-                if (!chatid && data?.length) {
+                const chatIdLocalStorageKey = this.getChatIdLocalStorageKey(userid);
+                let chatid = localStorage.getItem(chatIdLocalStorageKey);
+                if ((!chatid || !data?.find(c => c.id === chatid)) && data?.length) {
                     chatid = data[0].id;
-                    localStorage.setItem(userid + "-current-chat-id", chatid);
+                    localStorage.setItem(chatIdLocalStorageKey, chatid);
                 }
                 if (chatid) {
                     this.loadMessages(chatid);
@@ -303,6 +304,13 @@ class ConversationalAppEngineClient {
             });
     }
 
+    getChatIdLocalStorageKey(userid) {
+        const params = (new URL(document.location)).searchParams;
+        let appId = params.get("app");
+        appId = appId ? '-' + appId : '';
+        return userid + appId + "-current-chat-id";
+    }
+
     deleteChat(chatid) {
         if (!confirm('Are you shore you want to delete this chat [' + document.getElementById('chat' + chatid).getElementsByTagName('a')[0].innerText + ']?')) {
             return;
@@ -313,8 +321,9 @@ class ConversationalAppEngineClient {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    if (chatid == localStorage.getItem(this.getUserId() + "-current-chat-id")) {
-                        localStorage.removeItem(this.getUserId() + "-current-chat-id");
+                    const chatIdLocalStorageKey = this.getChatIdLocalStorageKey(this.getUserId());
+                    if (chatid == localStorage.getItem(chatIdLocalStorageKey)) {
+                        localStorage.removeItem(chatIdLocalStorageKey);
                     }
                     this.loadUserChats();
                 } else {
@@ -326,10 +335,22 @@ class ConversationalAppEngineClient {
                 console.log(error);
             });
     }
+
+    loadAppsMenu() {
+        const appsMenu = document.getElementById('appsmenu');
+        const appsList = window['appsList'] || [];
+        appsMenu.innerHTML = appsList.map(a => '<a href="/?app=' + a.app + '"' + (a.current? ' class="current"': '') + '>' + a.name + '</a>').join('');
+    }
+
+    toggleAppsMenu() {
+        const appsMenu = document.getElementById('appsmenu');
+        appsMenu.classList.toggle('shown');
+    }
 }
 
 let appEngine = null;
 window.addEventListener("DOMContentLoaded", (event) => {
     appEngine = new ConversationalAppEngineClient();
+    appEngine.loadAppsMenu();
     appEngine.loadUserChats();
 });

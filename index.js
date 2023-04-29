@@ -1,5 +1,5 @@
-import { QuizGenerator } from './apps/QuizGenerator.js';
 import {ConversationalAppEngine} from './ConversationalAppEngine.js';
+import { ConversationalApp } from './ConversationalApp.js';
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
@@ -8,7 +8,22 @@ import fs from 'fs';
 const port = 3000;
 
 
-const engine = new ConversationalAppEngine(QuizGenerator);
+const defaultEngineClassName = 'QuizGenerator';
+const engines = {}; 
+const appPath = './apps';
+fs.readdirSync(appPath).forEach(file => { 
+    // load app clases from apps folder
+    const modFile = appPath + "/" + file;
+     import(modFile).then(appModule => {
+        Object.keys(appModule).forEach(k => {
+            const moduleItem = appModule[k];
+            if(moduleItem.prototype instanceof ConversationalApp) {
+                engines[moduleItem.name] = new ConversationalAppEngine(moduleItem);
+            }
+        });
+     });
+});
+
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,31 +31,41 @@ app.use(cors());
 
 // Client
 app.get('/', (req, res) => {
+    const appName = req.query.app;
+    if(!appName || !engines[appName]) {
+        res.redirect('/?app=' + defaultEngineClassName);
+        return;
+    }
     fs.readFile('client/index.html', (err, data) => {
         if (err) {
             res.writeHead(500, {'Content-Type': 'text/html'});
             res.end('Error loading the file');
         } else {
+            res.cookie('app', appName);
             res.writeHead(200, {'Content-Type': 'text/html'});
-            res.end(engine.substituteText(data.toString()));
+            let html = engines[appName].substituteText(data.toString());
+            const appsList = Object.keys(engines).map(k => ({'app': k, 'name': engines[k].app.appName, 'current': k === appName}));
+            html += '<script> var appsList = ' + JSON.stringify(appsList) + ';</script>';
+            res.end(html);
         }
     });
 });
 
 app.get('/script.js', (req, res) => {
+    const appName = getAppNameCookieValue(req);
     fs.readFile('client/script.js', (err, data) => {
         if (err) {
             res.writeHead(500, {'Content-Type': 'text/html'});
             res.end('Error loading the file');
         } else {
             res.writeHead(200, {'Content-Type': 'text/javascript'});
-            res.end(engine.substituteText(data.toString()));
+            res.end(engines[appName].substituteText(data.toString()));
         }
     });
 });
 
 app.get('/style.css', (req, res) => {
-    fs.readFile('client/style.css', (err, data) => {
+     fs.readFile('client/style.css', (err, data) => {
         if (err) {
             res.writeHead(500, {'Content-Type': 'text/html'});
             res.end('Error loading the file');
@@ -54,6 +79,7 @@ app.get('/style.css', (req, res) => {
 // API
 app.get('/api/userchats', async (req, res) => {
     const userid = req.query.userid;
+    const appName = getAppNameCookieValue(req);
     console.log("Recived [Get User Chats] from user: " + userid);
 
     if (!userid) {
@@ -63,12 +89,13 @@ app.get('/api/userchats', async (req, res) => {
         return;
     }
 
-    res.json(engine.getUserChats(userid));
+    res.json(engines[appName].getUserChats(userid));
 });
 
 app.delete('/api/userchat', async (req, res) => {
     const userid = req.query.userid;
     const chatid = req.query.chatid;
+    const appName = getAppNameCookieValue(req);
     console.log("Recived [Delete Chat: '" + chatid + "'] from user: " + userid);
 
     if (!userid) {
@@ -85,7 +112,7 @@ app.delete('/api/userchat', async (req, res) => {
         return;
     }
 
-    engine.deleteUserChat(userid, chatid);
+    engines[appName].deleteUserChat(userid, chatid);
 
     res.json({ success: true });
 });
@@ -93,6 +120,7 @@ app.delete('/api/userchat', async (req, res) => {
 app.get('/api/chatmessages', async (req, res) => {
     const userid = req.query.userid;
     const chatid = req.query.chatid;
+    const appName = getAppNameCookieValue(req);
     console.log("Recived [Get Chat: '" + chatid + "'] from user: " + userid);
 
     if (!userid) {
@@ -109,13 +137,14 @@ app.get('/api/chatmessages', async (req, res) => {
         return;
     }
 
-    res.json(engine.getUserChat(userid, chatid));
+    res.json(engines[appName].getUserChat(userid, chatid));
 });
 
 app.post('/api/chat', (req, res) => {
     const message = req.body.message;
     const userid = req.body.userid;
     const chatid = req.body.chatid;
+    const appName = getAppNameCookieValue(req);
     console.log("Recived Message from user [" + userid + "], chat [" + chatid + "]: " + message);
 
     if (!userid) {
@@ -139,7 +168,7 @@ app.post('/api/chat', (req, res) => {
         return;
     }
 
-    engine.postMessage(userid, chatid, message, (err, data) => {
+    engines[appName].postMessage(userid, chatid, message, (err, data) => {
         if(err) {
             res.status(500).send(err);
             return;
@@ -152,3 +181,7 @@ app.post('/api/chat', (req, res) => {
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
+function getAppNameCookieValue(req) {
+    return req.headers.cookie.split(';').filter(c => c.trim().startsWith('app='))[0].split('=')[1].trim();
+}
+
