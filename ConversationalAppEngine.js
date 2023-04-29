@@ -99,6 +99,7 @@ export class ConversationalAppEngine {
         try {
             this.openai.createChatCompletion({
                 model: "gpt-3.5-turbo",
+                temperature: this.app.temperature,
                 messages: messages,
             }).then((completion) => {
                 console.log("Recived from ChatGPT: ");

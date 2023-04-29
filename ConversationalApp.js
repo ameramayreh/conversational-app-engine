@@ -10,6 +10,8 @@ class ConversationalApp {
     contentPreviewPlaceholder = 'No Preview';
     chatStartInstruction = 'Please keep in mind that we need to ensure that the API usage does not exceed 4K.';
 
+    temperature = 1;
+
     constructor(context) {
         this.context = context;
     }

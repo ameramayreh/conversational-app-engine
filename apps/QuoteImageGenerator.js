@@ -6,6 +6,8 @@ export class QuoteImageGenerator extends ConversationalApp {
     newChatLabel = 'New Quote';
     chatStartInstruction = 'Please provide the subject of the quote you want. Please keep in mind that we need to ensure that the API usage does not exceed 4K.';
 
+    temperature = 1;
+
     constructor(context) {
         super(context);
         this.context = context;
@@ -14,14 +16,22 @@ export class QuoteImageGenerator extends ConversationalApp {
     getDefaultMessages() {
         return [
             { "role": "system", "content": "You are artist that layout a quote in artistic way as SVG pc wallpaper."},
-            { "role": "user", "content": "I'll provide a subject to provide a quote about as SVG wallpaper, the text of the quote should be provided in more than one color and on different lines and alignments if suitable. Example:\n" + this.getExample()},
-            { "role": "user", "content": "Please put the svg between \n----\nand\n----\n, please don't put the code characters ```"},
+            { "role": "user", "content": "I'll provide a subject to provide a quote about as SVG wallpaper, the text of the quote should be provided in more than one color and on different lines and alignments if suitable, please add title attribute to the SVG. Example:\n" + this.getExample()},
+            { "role": "user", "content": "Please put the svg between \n----\nand\n----\n, please don't include code markdown characters ``` in the response"},
             { "role": "assistant", "content": "What is the subject of the quote you want?"}
         ];
     }
 
     getChatNameFromMessage(message) {
-        let msg = this.getTextMessage(message);
+        let msg = '';
+        const content = this.getAppContent(message);
+        if(content && content.match(/title=/i)){
+            msg = content.split(/title=/i)[1].split('"')[1].trim();
+            if(msg) {
+                return msg;
+            }
+        }
+        msg = this.getTextMessage(message);
         if(!msg) {
             return '';
         }
@@ -34,18 +44,21 @@ export class QuoteImageGenerator extends ConversationalApp {
     }
 
     getTextMessage(message) {
-        const messageParts = message.split('----');
+        const messageParts = message.split(/----*/g);
         let responseMessage = (messageParts[0] || '').trim();
         responseMessage += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
         return responseMessage;
     }
 
     getAppContent(message) {
-        const messageParts = message.split('----');
+        const messageParts = message.split(/----*/g);
 
         let svg = messageParts[1] || '';
         if(!svg) {
             return '';
+        }
+        if(svg.includes('```')) {
+            return (svg.split(/```\n*/i)[1] || svg).trim();
         }
         return this.getStyles() + this.getJS() + '<button onclick="downloadSVGAsFile()">Download</button><div id="resutl-container-svg" class="result-container">' + svg.trim() + '</div>';
     }
@@ -90,7 +103,7 @@ export class QuoteImageGenerator extends ConversationalApp {
     }
 
     getExample() {
-        return `<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+        return `<svg title="Family" width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="pattern" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse" >
             <rect x="0" y="0" width="200" height="200" fill="#7D7D7D"/>
