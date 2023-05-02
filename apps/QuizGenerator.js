@@ -12,10 +12,17 @@ export class QuizGenerator extends ConversationalApp {
     }
 
     getDefaultMessages() {
+        const mainMessage = `
+        I'll provide an article or document content and you will generate a comprehensive multiple choice quiz that covers only the provided content.
+        Please provide the quiz in YAML format delimited by four dashes (----) based on the following JSON schema:
+        ${JSON.stringify(this.getResponseSchema(), null, 2)}
+
+        Only one choice can be correct, if there are multiple correct choices, then the correct choices should be combined into a new choice. For example, if options A and C are both correct, the new choice could be "A and C."
+        `;
         return [
             { "role": "system", "content": "You are Quizzer, the quiz generator."},
-            { "role": "user", "content": "I'll provide an article or document content and you will generate a comprehensive multiple choice quiz that covers only the provided content in YAML format based on the following JSON schema:\n" + JSON.stringify(this.getResponseSchema(), null, 2)},
-            { "role": "user", "content": "Please put the YAML between \n----\nand\n----\n (this is a must), please don't include code markdown characters ``` in the response"},
+            { "role": "user", "content": mainMessage},
+            { "role": "user", "content": "Please don't include code markdown characters ``` in the response."},
             { "role": "assistant", "content": "Plese provide the content that you would like me to generate a quiz for."}
         ];
     }
@@ -88,9 +95,8 @@ export class QuizGenerator extends ConversationalApp {
         }
 
         #resutl-container-html #quiz .circle-sketch-highlight {
-            position: absolute;
-            right: 20px;
-            top: 20px;
+            right: 60px;
+            top: 135px;
         }
 
         #quiz.answerd .circle-sketch-highlight {
