@@ -35,12 +35,12 @@ If you don't have git installed. You can download the project [here](https://git
 ## [3] Implement your app [Optional]
 1- Crate a class that extends ConversationApp in the apps directory
 2- Implement the following methods:
-- getDefaultMessages: an array of instructions that tells GPT about its role and the expected response. Format [{"role": "system", "content": "You are ABC asesseten, you provide help in..."}, {"role": "user", "content": "Your responses should be structured in yaml format"}, ...]
-- getChatNameFromMessage: The name of the chat, it can be derived fom the message
+- getDefaultMessages: an array of instructions that tells GPT about its role and the expected response. Format [{"role": "system", "content": "You are ABC assistant, you provide help in..."}, {"role": "user", "content": "Your responses should be structured in yaml format"}, ...]
+- getChatNameFromMessage: The name of the chat, it can be derived from the message
 - getTextMessage: the response text that should be shown in the chat dialog
-- getAppContent: HTML (usually) based conted, generated based an extracted content from the message based on the app business need
+- getAppContent: HTML (usually) based content, generated based on extracted content from the message based on the app business need
 
-3- Overwrite any of the follwoing messages if needed
+3- Overwrite any of the following messages if needed
 - appName
 - chatListTitle
 - newChatLabel
@@ -55,7 +55,7 @@ If you don't have git installed. You can download the project [here](https://git
 
 2- Navigate to http:/localhost:3000/
 
-3- Check the avialable apps in the apps drop down menu beside the current app name.
+3- Check the available apps in the apps drop down menu beside the current app name.
 
 ![AppsMenu](https://user-images.githubusercontent.com/129025554/235294471-75ba27f4-4109-4cc2-81d4-6d38ef93ec5f.PNG)
 
@@ -69,7 +69,7 @@ The Quiz Generator is an application that harnesses the power of GPT technology 
 
 
 ## Statistical Data Analyzer
-The Statistical Data Analyzer is an application that extract Statistical Data from the provided text, and visiulize it as chart and as a data table. It will descripe any trends in the data.
+The Statistical Data Analyzer is an application that extract Statistical Data from the provided text and visualize it as chart and as a data table. It will describe any trends in the data.
 
 
 
@@ -83,7 +83,7 @@ The Quote Image Generator is an application that uses GPT to create wallpapers i
 
 
 ## Todo Assistant
-The Todo Assitant is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
+The Todo Assistant is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
 
 ![todo-app](https://user-images.githubusercontent.com/129025554/235294800-4dec094d-4982-463e-8b4b-338097037581.PNG)
 
