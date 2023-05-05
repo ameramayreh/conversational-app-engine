@@ -70,7 +70,10 @@ The Quiz Generator is an application that harnesses the power of GPT technology 
 
 ## Statistical Data Analyzer
 The Statistical Data Analyzer is an application that extract Statistical Data from the provided text and visualize it as chart and as a data table. It will describe any trends in the data.
-
+![SDA-01](https://user-images.githubusercontent.com/129025554/236461521-9d06b5a1-fbea-482d-afd1-ac45678ce13f.PNG)
+![SDA-02](https://user-images.githubusercontent.com/129025554/236461551-33d35bd3-83bc-45df-9747-64c81a0992a9.PNG)
+![SDA-03](https://user-images.githubusercontent.com/129025554/236461582-90cdf497-dd3e-4ad8-b35f-9ac2cf356942.png)
+![SDA-04](https://user-images.githubusercontent.com/129025554/236461853-6a0a4fcc-df02-4a57-80b8-96b7e9d0e8e1.png)
 
 
 ## Quote Image Generator
