@@ -30,9 +30,9 @@ git clone https://github.com/david-m-s/conversational-app-engine.git
 cd conversational-app-engine
 npm install
 ```
-If you don't have git installed. You can download the prject from [here](https://github.com/ameramayreh/conversational-app-engine/archive/refs/heads/main.zip)
+If you don't have git installed. You can download the project [here](https://github.com/ameramayreh/conversational-app-engine/archive/refs/heads/main.zip)
 
-## [3] Implement your app
+## [3] Implement your app [Optional]
 1- Crate a class that extends ConversationApp in the apps directory
 2- Implement the following methods:
 - getDefaultMessages: an array of instructions that tells GPT about its role and the expected response. Format [{"role": "system", "content": "You are ABC asesseten, you provide help in..."}, {"role": "user", "content": "Your responses should be structured in yaml format"}, ...]
@@ -55,7 +55,7 @@ If you don't have git installed. You can download the prject from [here](https:/
 
 2- Navigate to http:/localhost:3000/
 
-3- Check your app in the apps drop down menu beside the current app name.
+3- Check the avialable apps in the apps drop down menu beside the current app name.
 
 ![AppsMenu](https://user-images.githubusercontent.com/129025554/235294471-75ba27f4-4109-4cc2-81d4-6d38ef93ec5f.PNG)
 
@@ -63,9 +63,14 @@ If you don't have git installed. You can download the prject from [here](https:/
 # Demos
 Currently this project includes the following demo apps:
 
-## Quiz Generator (Default)
+## Quiz Generator
 The Quiz Generator is an application that harnesses the power of GPT technology to effortlessly create a quiz based on any given paragraph of text. Users can easily generate a comprehensive quiz that tests their knowledge and comprehension of the subject matter contained within the text. The generated quiz can then be exported in both HTML and GIFT formats:
 ![Quiz-Generator](https://user-images.githubusercontent.com/129025554/234749558-28ec7c9f-805e-4e42-9886-74f5e0872faa.PNG)
+
+
+## Statistical Data Analyzer
+The Statistical Data Analyzer is an application that extract Statistical Data from the provided text, and visiulize it as chart and as a data table. It will descripe any trends in the data.
+
 
 
 ## Quote Image Generator

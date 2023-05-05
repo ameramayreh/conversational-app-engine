@@ -21,7 +21,7 @@ class ConversationalApp {
     getTextMessage(message) {return message;}
     getAppContent(message) {return '<h1>No Content</h1>';}
     parseYaml(yamlStr) {
-        return yaml.load(yamlStr);
+        return yaml.load(yamlStr.replace(/```[^\n]*\n?/g, ''));
     }
 }
 
