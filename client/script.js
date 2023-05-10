@@ -4,8 +4,10 @@ class ConversationalAppEngineClient {
     submitButton;
     chatMessagesList;
     speechRecognition;
+    user;
 
-    constructor() {
+    constructor(user) {
+        this.user = user;
         this.messageField = document.getElementById("message");
         this.submitButton = document.getElementById("submitbutton");
         this.chatMessagesList = document.getElementById("chatmessages");
@@ -15,7 +17,7 @@ class ConversationalAppEngineClient {
     }
 
     initSpeechRecognition() {
-         if ("webkitSpeechRecognition" in window) {
+        if ("webkitSpeechRecognition" in window) {
             // Initialize webkitSpeechRecognition
             this.speechRecognition = new webkitSpeechRecognition();
 
@@ -101,12 +103,7 @@ class ConversationalAppEngineClient {
     }
 
     getUserId() {
-        let userid = localStorage.getItem("chat-user-id");
-        if (!userid) {
-            userid = Math.random().toString(36).substring(2, 15);
-            localStorage.setItem("chat-user-id", userid);
-        }
-        return userid;
+        return this.user.userId;
     }
 
     newChat() {
@@ -145,10 +142,10 @@ class ConversationalAppEngineClient {
         document.querySelectorAll('.chat-item').forEach((li) => li.classList.remove('current-chat'));
         document.getElementById('chat' + chatid).classList.add('current-chat');
     }
-    
+
     addResponse(response, isNew) {
         let responseMessage = response.message;
-    
+
         const appContent = response.appContent;
         let showPreviewButton = '';
         let id = undefined;
@@ -158,13 +155,13 @@ class ConversationalAppEngineClient {
             this.contentList.push(appContent);
             showPreviewButton = '<button class="content-preview-button" onclick="appEngine.showContent(' + (this.contentList.length - 1) + ')" >📄 Preview ➤</button>';
         }
-    
+
         let usageElement = '';
         if (response.usage) {
             usageElement = '<small title="Prompt: ' + response.usage.prompt_tokens + ', Response: ' + response.usage.completion_tokens + '">API Usage: ' + response.usage.total_tokens + '</small>';
         }
         responseMessage += '<div class="message-footer">' + showPreviewButton + usageElement + '</div>';
-    
+
         if (isNew && "speechSynthesis" in window && response.message) {
             speechSynthesis.speak(new SpeechSynthesisUtterance(response.message));
         } else {
@@ -183,24 +180,24 @@ class ConversationalAppEngineClient {
 
     setInnerHTML(elm, html) {
         elm.innerHTML = html;
-        
+
         Array.from(elm.querySelectorAll("script"))
-          .forEach( oldScriptEl => {
-            const newScriptEl = document.createElement("script");
-            
-            Array.from(oldScriptEl.attributes).forEach( attr => {
-              newScriptEl.setAttribute(attr.name, attr.value) 
+            .forEach(oldScriptEl => {
+                const newScriptEl = document.createElement("script");
+
+                Array.from(oldScriptEl.attributes).forEach(attr => {
+                    newScriptEl.setAttribute(attr.name, attr.value)
+                });
+
+                const scriptText = document.createTextNode(oldScriptEl.innerHTML);
+                newScriptEl.appendChild(scriptText);
+
+                oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
             });
-            
-            const scriptText = document.createTextNode(oldScriptEl.innerHTML);
-            newScriptEl.appendChild(scriptText);
-            
-            oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-        });
-      }
+    }
 
     setCurrentContentMessage(contentIndex) {
-        for (let i = 0; i <  this.contentList.length; i++) {
+        for (let i = 0; i < this.contentList.length; i++) {
             if (i == contentIndex) {
                 document.getElementById('content' + i).classList.add('current-content');
             } else {
@@ -339,7 +336,7 @@ class ConversationalAppEngineClient {
     loadAppsMenu() {
         const appsMenu = document.getElementById('appsmenu');
         const appsList = window['appsList'] || [];
-        appsMenu.innerHTML = appsList.map(a => '<a href="/?app=' + a.app + '"' + (a.current? ' class="current"': '') + '>' + a.name + '</a>').join('');
+        appsMenu.innerHTML = appsList.map(a => '<a href="/?app=' + a.app + '"' + (a.current ? ' class="current"' : '') + '>' + a.name + '</a>').join('');
     }
 
     toggleAppsMenu() {
@@ -348,9 +345,87 @@ class ConversationalAppEngineClient {
     }
 }
 
+class CurrentUser {
+    db;
+    userId;
+
+    constructor(userTask) {
+        this.openDatabase().then(db=>{
+            this.loadUserId().then((id)=> {
+                this.userId = id; 
+                userTask(this);
+            });
+        });
+    }
+
+    openDatabase() {
+        return new Promise((resolve, reject) => {// open the indexedDB database
+            const request = window.indexedDB.open('chatDB', 1);
+
+            // create object store and indexes
+            request.onupgradeneeded = function (event) {
+                this.db = event.target.result;
+                const objectStore = this.db.createObjectStore('chats', { keyPath: 'id' });
+                objectStore.createIndex('user_id', 'user_id', { unique: false });
+            }
+
+            // handle errors
+            request.onerror = function (event) {
+                reject('Failed to open chatDB:', event.target.error);
+            }
+
+            // store the database object for later use
+            request.onsuccess = function (event) {
+                resolve(this.db = event.target.result);
+            }
+        });
+    }
+
+    loadUserId() {
+        return new Promise(async (resolve, reject) => {
+            // check if the user id is stored in the database
+            let db;
+            await this.openDatabase().then(d => db = d);
+            const transaction = db.transaction(['chats'], 'readwrite');
+            const objectStore = transaction.objectStore('chats');
+            const index = objectStore.index('user_id');
+            const request = index.getAll();
+
+            request.onerror = function (event) {
+                reject(event.target.error);
+            }
+
+            request.onsuccess = function (event) {
+                const users = event.target.result;
+                const user = users.find(u => u.id === 'chat-user-id');
+
+                // if user id is not found, create a new one
+                if (!user) {
+                    const newUserId = Math.random().toString(36).substring(2, 15);
+                    const newUserData = { id: 'chat-user-id', user_id: newUserId };
+
+                    const addRequest = objectStore.add(newUserData);
+
+                    addRequest.onerror = function (event) {
+                        reject(event.target.error);
+                    }
+
+                    addRequest.onsuccess = function (event) {
+                        resolve(newUserId);
+                    }
+                } else {
+                    resolve(user.user_id);
+                }
+            }
+        });
+    }
+}
+
 let appEngine = null;
 window.addEventListener("DOMContentLoaded", (event) => {
-    appEngine = new ConversationalAppEngineClient();
-    appEngine.loadAppsMenu();
-    appEngine.loadUserChats();
+    new CurrentUser((user) => {
+        appEngine = new ConversationalAppEngineClient(user);
+        appEngine.loadAppsMenu();
+        appEngine.loadUserChats();
+    });
 });

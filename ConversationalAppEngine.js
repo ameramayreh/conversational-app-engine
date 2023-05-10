@@ -6,6 +6,7 @@ export class ConversationalAppEngine {
     openai = null;
     defaultMesages = [];
     userMessages = {};
+    model =  "gpt-3.5-turbo";
 
     constructor(appClass) {
         this.openai = new OpenAIApi(new Configuration({
@@ -98,7 +99,7 @@ export class ConversationalAppEngine {
 
         try {
             this.openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
+                model: this.model,
                 temperature: this.app.temperature,
                 messages: messages,
             }).then((completion) => {
