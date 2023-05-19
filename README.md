@@ -55,9 +55,9 @@ If you don't have git installed. You can download the project [here](https://git
 
 2- Navigate to http:/localhost:3000/
 
-3- Check the available apps in the apps drop down menu beside the current app name.
+3- Check the available apps in the side bar.
 
-![AppsMenu](https://user-images.githubusercontent.com/129025554/235294471-75ba27f4-4109-4cc2-81d4-6d38ef93ec5f.PNG)
+![Apps](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/78cf7bc6-9723-4778-8f6c-bdc6bf6acadf)
 
 
 # Demos
@@ -65,28 +65,27 @@ Currently this project includes the following demo apps:
 
 ## Quiz Generator
 The Quiz Generator is an application that harnesses the power of GPT technology to effortlessly create a quiz based on any given paragraph of text. Users can easily generate a comprehensive quiz that tests their knowledge and comprehension of the subject matter contained within the text. The generated quiz can then be exported in both HTML and GIFT formats:
-![Quiz-Generator](https://user-images.githubusercontent.com/129025554/234749558-28ec7c9f-805e-4e42-9886-74f5e0872faa.PNG)
+![Quiz-Generator-2](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/8414736e-8e94-495d-b4ea-319bb91d3f72)
 
 
 ## Statistical Data Analyzer
 The Statistical Data Analyzer is an application that extract Statistical Data from the provided text and visualize it as chart and as a data table. It will describe any trends in the data.
-![SDA-01](https://user-images.githubusercontent.com/129025554/236461521-9d06b5a1-fbea-482d-afd1-ac45678ce13f.PNG)
-![SDA-02](https://user-images.githubusercontent.com/129025554/236461551-33d35bd3-83bc-45df-9747-64c81a0992a9.PNG)
-![SDA-03](https://user-images.githubusercontent.com/129025554/236461582-90cdf497-dd3e-4ad8-b35f-9ac2cf356942.png)
-![SDA-04](https://user-images.githubusercontent.com/129025554/236461853-6a0a4fcc-df02-4a57-80b8-96b7e9d0e8e1.png)
+![SDA-2-01](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/4d58bf58-4a08-4608-bcad-d121e2bad530)
+![SDA-2-02](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/040d232e-dc79-49f7-acb5-3819c9dee396)
+![SDA-2-04](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/61382695-9a65-423d-841c-b41e414554f2)
+
 
 
 ## Quote Image Generator
 The Quote Image Generator is an application that uses GPT to create wallpapers in SVG format. These wallpapers feature suggested quotes that are relevant to a specified topic. It's important to note that sometimes the generated images may have rendering issues. However, you can simply request to fix them in the conversation. To give you an idea of what these wallpapers look like, here's an example of a few generated SVGs:
-![quote - failure](https://user-images.githubusercontent.com/129025554/233998565-b5e51ef3-e3e9-42bd-af25-f283f2885d29.svg)
+![QuoteImageGenerator](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/82b72d06-0d64-4138-9a1f-64749cc283c6)
 
-![quote - success](https://user-images.githubusercontent.com/129025554/234000131-793d5b14-3404-4a09-8eeb-314e6dcb8c64.svg)
+![quote - failure](https://user-images.githubusercontent.com/129025554/233998565-b5e51ef3-e3e9-42bd-af25-f283f2885d29.svg)
 
 ![quote - life](https://user-images.githubusercontent.com/129025554/233998665-66b3552c-e6f5-4546-bb47-32e93ccb6494.svg)
 
 
 ## Todo Assistant
 The Todo Assistant is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
-
-![todo-app](https://user-images.githubusercontent.com/129025554/235294800-4dec094d-4982-463e-8b4b-338097037581.PNG)
+![todo-app-1](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/0502b868-daa8-4353-9c64-5033863d10c6)
 
