@@ -13,6 +13,9 @@ const engines = {};
 const appPath = './apps';
 fs.readdirSync(appPath).forEach(file => { 
     // load app clases from apps folder
+    if(!file.endsWith('.js')){
+        return;
+    }
     const modFile = appPath + "/" + file;
      import(modFile).then(appModule => {
         Object.keys(appModule).forEach(k => {
@@ -44,7 +47,7 @@ app.get('/', (req, res) => {
             res.cookie('app', appName);
             res.writeHead(200, {'Content-Type': 'text/html'});
             let html = engines[appName].substituteText(data.toString());
-            const appsList = Object.keys(engines).map(k => ({'app': k, 'name': engines[k].app.appName, 'current': k === appName}));
+            const appsList = Object.keys(engines).map(k => ({'app': k, 'name': engines[k].app.appName, 'current': k === appName, 'icon': engines[k].app.appIconName}));
             html += '<script> var appsList = ' + JSON.stringify(appsList) + ';</script>';
             res.end(html);
         }

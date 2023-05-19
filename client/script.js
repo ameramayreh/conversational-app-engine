@@ -1,18 +1,40 @@
+const MAX_TOKENS = {{MAX_TOKENS}};
+
 class ConversationalAppEngineClient {
     contentList = [];
     messageField;
     submitButton;
     chatMessagesList;
     speechRecognition;
+    messageform;
+    capacityIndecator;
     user;
+    app;
+
+    mesageStyleClasses = {
+        "user": "user rounded-md bg-blue-50 rounded-tl-none p-2 ml-9 mt-4",
+        "response": "response rounded-md bg-blue-200 rounded-tr-none p-2 mr-9 mt-4",
+        "error": "error rounded-md bg-red-200 p-2"
+    };
 
     constructor(user) {
         this.user = user;
+        const appsList = window['appsList'] || [];
+        this.app = appsList.find(a => a.current) || {};
         this.messageField = document.getElementById("message");
+        this.capacityIndecator = document.getElementById("capacity-indecator");
+        this.messageField.addEventListener("keypress", (event)=> {
+            if(event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                this.postMessage();
+                return false;
+            }
+        });
         this.submitButton = document.getElementById("submitbutton");
         this.chatMessagesList = document.getElementById("chatmessages");
         this.chatsList = document.getElementById("chatslist");
         this.contentPreview = document.getElementById("contentpreview");
+        this.messageform = document.getElementById("messageform");
         this.initSpeechRecognition();
     }
 
@@ -61,7 +83,7 @@ class ConversationalAppEngineClient {
                 console.log(final_transcript);
                 console.log(interim_transcript);
                 if (final_transcript) {
-                    this.messageField.value = final_transcript;
+                    this.messageField.innerText = final_transcript;
                     this.postMessage();
                 }
             };
@@ -71,17 +93,28 @@ class ConversationalAppEngineClient {
     }
 
     disableChat() {
-        this.messageField.disabled = true;
+        this.messageField.contentEditable = false;
         this.submitButton.disabled = true;
     }
 
     enableChat() {
-        this.messageField.disabled = false;
+        this.messageField.contentEditable = true;
         this.submitButton.disabled = false;
     }
 
-    addMessage(message, messageClass, id) {
-        this.chatMessagesList.innerHTML += "<li" + (id === undefined ? '' : ' id="' + id + '"') + " class='" + messageClass + "'>" + message + "</li>";
+    addMessage(message, messageClass, id, userName, userImageUrl, userIconName) {
+        let messageUser = '';
+        if(userImageUrl) {
+            messageUser = `<img src="${userImageUrl}" class="message-user rounded-full w-8 h-8 absolute"/>`
+        } else if(userIconName) {
+            messageUser = `<i class="message-user material-icons rounded-full w-8 h-8 absolute text-gray-500">${userIconName}</i>`;
+        }  else if(userName) {
+            messageUser = `<div class="message-user absolute w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+            <span class="text-l text-gray-600" title="${userName}">${userName.toUpperCase()[0]}</span>
+          </div>`;
+        } 
+
+        this.chatMessagesList.innerHTML += "<li" + (id === undefined ? '' : ' id="' + id + '"') + " class='relative " + messageClass + "'>" + messageUser + message + "</li>";
         this.chatMessagesList.scrollTop = this.chatMessagesList.scrollHeight;
     }
 
@@ -94,7 +127,7 @@ class ConversationalAppEngineClient {
     }
 
     addChatItem(chatid, chatName) {
-        this.chatsList.innerHTML += "<li class='chat-item' id='chat" + chatid + "'><a tabindex=\"0\" onclick=\"appEngine.showChat('" + chatid + "')\">" + chatName + "</a><button onclick=\"appEngine.deleteChat('" + chatid + "')\">🗑</button></li>";
+        this.chatsList.innerHTML += "<li class='chat-item flex bg-white rounded-md mb-1 px-2 py-1 items-center hover:bg-gray-200' id='chat" + chatid + "'><a class='flex-grow cursor-pointer font-bolder text-gray-600 hover:text-gray-900' tabindex=\"0\" onclick=\"appEngine.showChat('" + chatid + "')\">" + chatName + "</a><button onclick=\"appEngine.deleteChat('" + chatid + "')\"><i class='material-icons text-gray-400 hover:text-gray-600'>delete</i></button></li>";
     }
 
 
@@ -120,10 +153,13 @@ class ConversationalAppEngineClient {
     }
 
     clearChat() {
-        this.chatMessagesList.innerHTML = "<li class='instructions'>{{CHAT_START_INSTRUCTIONS}}</li>";
+        this.chatMessagesList.innerHTML = '';
+        this.addMessage("{{CHAT_START_INSTRUCTIONS}}", this.mesageStyleClasses.response, undefined, null, null, this.app.icon)
         this.contentPreview.innerHTML = "";
-        this.messageField.value = "";
+        this.messageField.innerHTML = "";
         this.contentList.length = 0;
+        this.capacityIndecator.style.width = '0%';
+        this.capacityIndecator.title = null;
     }
 
     showContent(index) {
@@ -153,23 +189,31 @@ class ConversationalAppEngineClient {
             this.setContentPreview(appContent, this.contentList.length);
             id = 'content' + this.contentList.length;
             this.contentList.push(appContent);
-            showPreviewButton = '<button class="content-preview-button" onclick="appEngine.showContent(' + (this.contentList.length - 1) + ')" >📄 Preview ➤</button>';
+            showPreviewButton = '<button class="content-preview-button" onclick="appEngine.showContent(' + (this.contentList.length - 1) + ')" ><i class="material-icons">preview</i></button>';
         }
 
-        let usageElement = '';
         if (response.usage) {
-            usageElement = '<small title="Prompt: ' + response.usage.prompt_tokens + ', Response: ' + response.usage.completion_tokens + '">API Usage: ' + response.usage.total_tokens + '</small>';
+           const usagePerc = Math.round(100 * Math.min(response.usage.total_tokens, MAX_TOKENS)/MAX_TOKENS);
+           this.capacityIndecator.style.width = usagePerc + '%';
+           this.capacityIndecator.title = 'Used ' + response.usage.total_tokens;
         }
-        responseMessage += '<div class="message-footer">' + showPreviewButton + usageElement + '</div>';
-
+        
+        if(showPreviewButton) {
+            responseMessage += '<div class="message-footer">' + showPreviewButton + '</div>';
+        }
+        
         if (isNew && "speechSynthesis" in window && response.message) {
             speechSynthesis.speak(new SpeechSynthesisUtterance(response.message));
         } else {
             console.log("Text to Speech Not Available");
         }
-        this.addMessage(responseMessage.trim(), "response", id);
+        this.addMessage(responseMessage.trim(), this.mesageStyleClasses.response, id, null, null, this.app.icon);
         if (id) {
             this.setCurrentContentMessage(this.contentList.length - 1);
+        }
+        if(response?.usage?.total_tokens >= MAX_TOKENS) {
+             this.addMessage("Reached the maximun tokens count for a signle converation, sorry :(", this.mesageStyleClasses.error);
+             this.disableChat();
         }
     }
 
@@ -207,7 +251,7 @@ class ConversationalAppEngineClient {
     }
 
     postMessage() {
-        const message = this.messageField.value;
+        const message = this.messageField.innerText.trim();
         if (!message) {
             return false;
         }
@@ -215,9 +259,10 @@ class ConversationalAppEngineClient {
         const chatid = this.getCurrentChatId();
         const data = { message: message, userid: this.getUserId(), chatid: chatid };
 
-        this.addMessage(message, "user");
-        this.messageField.value = '';
+        this.addMessage(message, this.mesageStyleClasses.user, undefined, this.user.name, this.user.imageUrl);
+        this.messageField.innerHTML = '';
         this.disableChat();
+        this.messageform.classList.add('processing');
 
         fetch("http://" + location.hostname + ":3000/api/chat", {
             method: "POST",
@@ -236,12 +281,14 @@ class ConversationalAppEngineClient {
                     chatItem.childNodes[0].innerHTML = data.chatName ? data.chatName : chatItem.childNodes[0].innerHTML;
                 }
                 this.enableChat();
+                this.messageform.classList.remove('processing');
             })
             .catch(error => {
                 console.error(error);
-                this.addMessage("Error: " + error, "error");
-                this.messageField.value = message;
+                this.addMessage("Error: " + error, this.mesageStyleClasses.error);
+                this.messageField.innerText = message;
                 this.enableChat();
+                this.messageform.classList.remove('processing');
             });
     }
 
@@ -255,7 +302,7 @@ class ConversationalAppEngineClient {
                 let i = 1;
                 for (const responseMessage of data) {
                     if (i++ % 2) {
-                        this.addMessage(responseMessage.message, "user");
+                        this.addMessage(responseMessage.message, this.mesageStyleClasses.user, undefined, this.user.name, this.user.imageUrl);
                     } else {
                         this.addResponse(responseMessage);
                     }
@@ -263,7 +310,7 @@ class ConversationalAppEngineClient {
             })
             .catch(error => {
                 console.error(error);
-                this.addMessage("Failed to load message: " + error, "error");
+                this.addMessage("Failed to load message: " + error, this.mesageStyleClasses.error);
             });
     }
 
@@ -297,7 +344,7 @@ class ConversationalAppEngineClient {
             })
             .catch(error => {
                 console.error(error);
-                this.addMessage("Failed to load old forms: " + error, "error");
+                this.addMessage("Failed to load old forms: " + error, this.mesageStyleClasses.error);
             });
     }
 
@@ -336,7 +383,7 @@ class ConversationalAppEngineClient {
     loadAppsMenu() {
         const appsMenu = document.getElementById('appsmenu');
         const appsList = window['appsList'] || [];
-        appsMenu.innerHTML = appsList.map(a => '<a href="/?app=' + a.app + '"' + (a.current ? ' class="current"' : '') + '>' + a.name + '</a>').join('');
+        appsMenu.innerHTML = appsList.map(a => `<a href="/?app=${a.app}" title="${a.name}" class="flex flex-col items-center text-center mb-4 ${a.current ? ' text-white' : 'text-gray-600 hover:text-gray-50'}"><i class="material-icons">${a.icon}</i></a>`).join('');
     }
 
     toggleAppsMenu() {
@@ -348,82 +395,22 @@ class ConversationalAppEngineClient {
 class CurrentUser {
     db;
     userId;
+    name = 'Guest';
+    imageUrl;
 
     constructor(userTask) {
-        this.openDatabase().then(db=>{
-            this.loadUserId().then((id)=> {
-                this.userId = id; 
-                userTask(this);
-            });
-        });
-    }
-
-    openDatabase() {
-        return new Promise((resolve, reject) => {// open the indexedDB database
-            const request = window.indexedDB.open('chatDB', 1);
-
-            // create object store and indexes
-            request.onupgradeneeded = function (event) {
-                this.db = event.target.result;
-                const objectStore = this.db.createObjectStore('chats', { keyPath: 'id' });
-                objectStore.createIndex('user_id', 'user_id', { unique: false });
-            }
-
-            // handle errors
-            request.onerror = function (event) {
-                reject('Failed to open chatDB:', event.target.error);
-            }
-
-            // store the database object for later use
-            request.onsuccess = function (event) {
-                resolve(this.db = event.target.result);
-            }
-        });
-    }
-
-    loadUserId() {
-        return new Promise(async (resolve, reject) => {
-            // check if the user id is stored in the database
-            let db;
-            await this.openDatabase().then(d => db = d);
-            const transaction = db.transaction(['chats'], 'readwrite');
-            const objectStore = transaction.objectStore('chats');
-            const index = objectStore.index('user_id');
-            const request = index.getAll();
-
-            request.onerror = function (event) {
-                reject(event.target.error);
-            }
-
-            request.onsuccess = function (event) {
-                const users = event.target.result;
-                const user = users.find(u => u.id === 'chat-user-id');
-
-                // if user id is not found, create a new one
-                if (!user) {
-                    const newUserId = Math.random().toString(36).substring(2, 15);
-                    const newUserData = { id: 'chat-user-id', user_id: newUserId };
-
-                    const addRequest = objectStore.add(newUserData);
-
-                    addRequest.onerror = function (event) {
-                        reject(event.target.error);
-                    }
-
-                    addRequest.onsuccess = function (event) {
-                        resolve(newUserId);
-                    }
-                } else {
-                    resolve(user.user_id);
-                }
-            }
-        });
+        this.userId = localStorage.getItem('chat-user-id');
+        if(!this.userId) {
+            this.userId = Math.random().toString(36).substring(2, 15);
+            localStorage.setItem('chat-user-id', this.userId);
+        }
+        userTask(this);
     }
 }
 
 let appEngine = null;
 window.addEventListener("DOMContentLoaded", (event) => {
-    new CurrentUser((user) => {
+    window.currentUser = window.currentUser || new CurrentUser((user) => {
         appEngine = new ConversationalAppEngineClient(user);
         appEngine.loadAppsMenu();
         appEngine.loadUserChats();

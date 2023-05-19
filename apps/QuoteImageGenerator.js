@@ -4,7 +4,8 @@ export class QuoteImageGenerator extends ConversationalApp {
     appName = 'Quote Image Generator';
     chatListTitle = 'My Quote Images';
     newChatLabel = 'New Quote';
-    chatStartInstruction = 'Please provide the subject of the quote you want. Please keep in mind that we need to ensure that the API usage does not exceed 4K.';
+    chatStartInstruction = 'Please provide the subject of the quote you want.';
+    appIconName = 'format_quote';
 
     temperature = 1;
 
@@ -60,7 +61,7 @@ export class QuoteImageGenerator extends ConversationalApp {
         if(svg.includes('```')) {
             return (svg.split(/```\n*/i)[1] || svg).trim();
         }
-        return this.getStyles() + this.getJS() + '<button onclick="downloadSVGAsFile()">Download</button><div id="resutl-container-svg" class="result-container">' + svg.trim() + '</div>';
+        return this.getStyles() + this.getJS() + '<button id="download-button" style="" onclick="downloadSVGAsFile()">Download</button><div id="resutl-container-svg" class="result-container">' + svg.trim() + '</div>';
     }
 
     getStyles() {
@@ -68,6 +69,18 @@ export class QuoteImageGenerator extends ConversationalApp {
         .result-container {
             max-width: 100%;
             overflow: auto;
+        }
+        .result-container svg {
+            max-width: 100% !important;
+            height: auto !important;
+        }
+        #download-button {
+            margin-bottom: 5px;
+            padding: 1px 10px;
+            border-radius: 5px;
+            background-color: #34d399;
+            color: #FFF;
+            font-weight: 300;
         }
         </style>`;
     }

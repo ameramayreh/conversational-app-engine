@@ -5,6 +5,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
     chatListTitle = 'My Data';
     newChatLabel = 'New Data';
     chatStartInstruction = 'Please provide me with the data you want to analyze';
+    appIconName = 'insert_chart';
 
     constructor(context) {
         super(context);

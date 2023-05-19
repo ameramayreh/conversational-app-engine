@@ -5,6 +5,7 @@ export class QuizGenerator extends ConversationalApp {
     chatListTitle = 'My Topics';
     newChatLabel = 'New Topic';
     chatStartInstruction = 'Please provide the article/document that you want to generate a quiz for. Please keep in mind that we need to ensure that the API usage does not exceed 4K.';
+    appIconName = 'quiz';
 
     constructor(context) {
         super(context);
@@ -70,11 +71,19 @@ export class QuizGenerator extends ConversationalApp {
 
         quizHtml += '</ul><div class="footer-actions"><input type="submit" value="Submit" /> <input type="reset" value="Retry" /><div></form></div>';
             
-        return this.getJS() + '<button onclick="downloadAsHTMLFile()">Download HTML</button> <button onclick="downloadAsGIFTFile()">Download GIFT</button><div id="resutl-container-html" class="result-container">' + this.getStyles() + this.getContentJS() + quizHtml + '</div>';
+        return this.getJS() + '<button class="download-button" onclick="downloadAsHTMLFile()">Download HTML</button> <button class="download-button" onclick="downloadAsGIFTFile()">Download GIFT</button><div id="resutl-container-html" class="result-container">' + this.getStyles() + this.getContentJS() + quizHtml + '</div>';
     }
 
     getStyles() {
         return `<style>
+        .download-button {
+            margin-bottom: 5px;
+            padding: 1px 10px;
+            border-radius: 5px;
+            background-color: #34d399;
+            color: #FFF;
+            font-weight: 300;
+        }
         #quiz {
             box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px, rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
             border-radius: 10px;
@@ -82,6 +91,7 @@ export class QuizGenerator extends ConversationalApp {
             margin: 10px;
             font-family: Arial, Helvetica, sans-serif;
             position: relative;
+            background-color: #FFF;
         }
 
         #quiz .circle-sketch-highlight {
@@ -96,7 +106,7 @@ export class QuizGenerator extends ConversationalApp {
 
         #resutl-container-html #quiz .circle-sketch-highlight {
             right: 60px;
-            top: 135px;
+            top: 120px;
         }
 
         #quiz.answerd .circle-sketch-highlight {
@@ -104,45 +114,48 @@ export class QuizGenerator extends ConversationalApp {
         }
           
         #quiz .circle-sketch-highlight:before{
-            content:"";
-            z-index:-1;
-            left:-0.5em;
-            top:-0.1em;
-            border-width:2px;
-            border-style:solid;
-            border-color:red;
-            position:absolute;
-            border-right-color:transparent;
-            width:100%;
-            height:1em;
-            transform:rotate(2deg);
-            opacity:0.7;
-            border-radius:50%;
-            padding:0.1em 0.25em;
+            content: "";
+            z-index: -1;
+            left: -0.49em;
+            top: -0.05em;
+            border-width: 2px;
+            border-style: solid;
+            border-color: red;
+            position: absolute;
+            border-right-color: transparent;
+            width: 150%;
+            height: 100%;
+            transform: rotate(2deg);
+            opacity: 0.7;
+            border-radius: 50%;
+            padding: 0.1em 0.25em;
         }
           
         #quiz .circle-sketch-highlight:after{
-            content:"";
-            z-index:-1;
-            left:-0.5em;
-            top:0.1em;
-            padding:0.1em 0.25em;
-            border-width:2px;
-            border-style:solid;
-            border-color:red;
-            border-left-color:transparent;
-            border-top-color:transparent;
-            position:absolute;
-            width:100%;
-            height:1em;
-            transform:rotate(-1deg);
-            opacity:0.7;
-            border-radius:50%;
+            content: "";
+            z-index: -1;
+            left: -0.6em;
+            top: -2px;
+            padding: 0.1em 0.25em;
+            border-width: 2px;
+            border-style: solid;
+            border-color: red;
+            border-left-color: transparent;
+            border-top-color: transparent;
+            position: absolute;
+            width: 160%;
+            height: 110%;
+            transform: rotate(-1deg);
+            opacity: 0.7;
+            border-radius: 50%;
         }
 
         #quiz h1 {
             text-align: center;
             margin-top: 5px;
+            font-size: xx-large;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
         #quiz ul {
@@ -190,6 +203,8 @@ export class QuizGenerator extends ConversationalApp {
         #quiz h3 {
             margin-bottom: 5px;
             border-radius: 5px;
+            font-size: larger;
+            font-weight: 600;
         }
         #quiz h3 span {
             display: inline-block;
@@ -227,6 +242,12 @@ export class QuizGenerator extends ConversationalApp {
             align-items: flex-start;
             margin-bottom: 7px;
         }
+
+        #quiz input[type=radio] {
+            margin-top: 5px;
+            margin-right: 5px;
+        }
+
         #quiz.answerd .question input[type=radio]:checked+span {
             color: red;
             font-weight: bold;
