@@ -170,6 +170,12 @@
     border-radius: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
+    display: inline !important;
+    color: #000000DD !important;
+}
+
+.textarea img {
+    display: none !important;
 }
 
 .textarea[contenteditable]:empty::before {

@@ -4,7 +4,7 @@ export class QuizGenerator extends ConversationalApp {
     appName = 'Quiz Generator';
     chatListTitle = 'My Topics';
     newChatLabel = 'New Topic';
-    chatStartInstruction = 'Please provide the article/document that you want to generate a quiz for. Please keep in mind that we need to ensure that the API usage does not exceed 4K.';
+    chatStartInstruction = 'Please provide the article/document that you want to generate a quiz for.';
     appIconName = 'quiz';
 
     constructor(context) {
