@@ -1,6 +1,12 @@
 # About
 Conversational App Engine is an open-source engine that allows developers to quickly implement chat based apps using OpenAI's completion API. With Conversational App Engine, developers can focus on their app's use case while leveraging the power of Conversational App Engine to handle the chat management.
 
+**Content:**
+ - [History](#history)
+ - [How to use](#how-to-use)
+ - [Demos](#demos)
+ - [Create your App](#create-your-app)
+
 ## History
 Conversational App Engine was initially created as a demonstration of how OpenAI's completion API can be used to build a form designer. However, we quickly realized that the same technology could be applied to a wide range of use cases. Our goal is to provide developers with an easy-to-use engine that can improve their app's user experience with conversational AI.
 
@@ -17,6 +23,7 @@ To implement your own app, create a new class in the apps directory that extends
 Once you have created your app, import it into the index.js file and use it to initialize a new instance of ConversationalAppEngine. Then, run node ./index.js in the project directory and navigate to http://localhost:3000/ to see your app in action.
 
 ## Prerequisets
+* [An OpenAI API Key](https://platform.openai.com/account/api-keys)
 * [Nodejs and npm](https://nodejs.org/en/download)
 * [Git (Optional)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 
@@ -33,29 +40,14 @@ npm install
 If you don't have git installed. You can download the project [here](https://github.com/ameramayreh/conversational-app-engine/archive/refs/heads/main.zip)
 
 ## [3] Implement your app [Optional]
-1- Crate a class that extends ConversationApp in the apps directory
-2- Implement the following methods:
-- getDefaultMessages: an array of instructions that tells GPT about its role and the expected response. Format [{"role": "system", "content": "You are ABC assistant, you provide help in..."}, {"role": "user", "content": "Your responses should be structured in yaml format"}, ...]
-- getChatNameFromMessage: The name of the chat, it can be derived from the message
-- getTextMessage: the response text that should be shown in the chat dialog
-- getAppContent: HTML (usually) based content, generated based on extracted content from the message based on the app business need
-
-3- Overwrite any of the following messages if needed
-- appName
-- chatListTitle
-- newChatLabel
-- newChatName
-- contentPreviewPlaceholder
-- chatStartInstruction
-
-4- Overwrite the `temperature` property if needed, default is 1, valid values are between 0 and 2 inclusive
+See [Create your App](#create-your-app).
 
 ## [4] Run your project
 1- Run node ./index.js in the project directory
 
 2- Navigate to http:/localhost:3000/
 
-3- Check the available apps in the side bar.
+3- Click on one of the available apps in the side bar.
 
 ![Apps](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/78cf7bc6-9723-4778-8f6c-bdc6bf6acadf)
 
@@ -89,3 +81,193 @@ The Quote Image Generator is an application that uses GPT to create wallpapers i
 The Todo Assistant is an application that uses GPT to manage your tasks as a todo list, where you can tell the app about your new tasks and completed ones and the app will render them in a list:
 ![todo-app-1](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/0502b868-daa8-4353-9c64-5033863d10c6)
 
+
+# Create your App
+1- Crate a class that extends ConversationApp and save it in the ./apps directory of the project folder
+```js
+export class SpellAndGrammarChecker extends ConversationalApp {
+    constructor(context) {
+        super(context);
+    }
+}
+```
+
+
+2- Implement the following methods:
+- getDefaultMessages: 
+eturns a list of messages that till OpenAI chat API about its role in the conversation, the expected user input, how to process it, and, what is the expected response (see [OpenAI guide](https://platform.openai.com/docs/guides/chat/introduction)). It can also includes examples about the user input and/or expected response.
+Each message is an object that contains a role and content properties: `{"role": "...", "content": "..."}`
+The `role` of first message should be "system", and the `content` is a high level description of OpenAI chat API's role in this conversation. Then it followed by one or more messages with the "user" `role`, that tells OpenAI chat API how to process and response to the user input.
+You may add a last message with role "assistant", where you ask the user to provide input.
+
+```js
+getDefaultMessages() {
+    return [
+        {"role": "system", "content": "You are a spell and grammar checker. You can help with identifying different types of mistakes in a text."},
+        {"role": "user", "content": `Provided with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
+        the resulting text must be delimited by "\`\`\`".
+        Example:
+        Input: "I use grammer checker"
+        Response:
+        \`\`\`
+        I use <span title="Misspelled, correct is grammar">grammer</span> checker
+        \`\`\`
+        `},
+        {"role": "assistant", "content": "Please share your paragraph:"}
+    ]
+}
+```
+
+- getChatNameFromMessage:
+Returns the title of the chat, this can be derived from OpenAI chat API's responseMessage, especially if you instruct to include it in the response in the default messages. If no title can be derived from the message you can return a constant value. Or return null to keep the previous chat title.
+
+```js
+getChatNameFromMessage(responseMessage) {
+    return 'Document';
+}
+```
+
+- getTextMessage:
+Returns the normal conversation text returned in OpenAI chat API's responseMessage (if any) after excluding the required app's business data.
+
+```js
+getTextMessage(responseMessage) {
+    let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+    let result = (messageParts[0] || '').trim();
+    result += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
+    return result;
+}
+```
+
+- getAppContent:
+Returns formatted the app's business data that returned in OpenAI chat API's responseMessage (if any), after excluding the normal conversation text. Usually you will format the app's business data as HTML along with any needed css and js (local and included).
+
+```js
+// Extracted some of the method logic in a separate method getStyles
+getAppContent(responseMessage) {
+    let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+    const text = messageParts[1];
+    if(!text) {
+        return null;
+    }
+
+    return this.getStyles() + `<div class="result-text">${text}</div>`;
+}
+
+getStyles() {
+    return `<style>
+    .result-text {
+        background-color: white;
+        border-radius: 10px;
+        padding: 30px;
+        font-color: #000000BB;
+        font-family: Arial;
+        white-space: pre-wrap;
+        border-bottom: 2px solid #4ade80;
+    }
+
+    .result-text:has(span) {
+        border-color: #fecaca;
+    }
+
+    .result-text span {
+        background-color: #fee2e2;
+    }
+    </style>`;
+}
+```
+
+3- Overwrite any of the following messages if needed
+- appName
+- chatListTitle
+- newChatLabel
+- newChatName
+- contentPreviewPlaceholder
+- appIconName: google material icon name
+- chatStartInstruction
+
+```js
+appName = 'Spell and Grammar Checker';
+chatListTitle = 'My Documents';
+newChatLabel = 'New Document';
+appIconName = 'find_replace';
+chatStartInstruction = "Please share your paragraph:";
+```
+
+4- If needed Overwrite the `temperature` property if needed, default is 1, valid values are between 0 and 2 inclusive
+
+Here is the full file content, save it as `./apps/SpellAndGrammarChecker.js` folder and restart nodejs
+```js
+import { ConversationalApp } from '../ConversationalApp.js';
+
+export class SpellAndGrammarChecker extends ConversationalApp {
+    appName = 'Spell and Grammar Checker';
+    chatListTitle = 'My Documents';
+    newChatLabel = 'New Document';
+    appIconName = 'find_replace';
+    chatStartInstruction = "Please share your paragraph:";
+
+    constructor(context) {
+        super(context);
+    }
+
+    getDefaultMessages() {
+        return [
+            {"role": "system", "content": "You are a spell and grammar checker. You can help with identifying different types of mistakes in a text."},
+            {"role": "user", "content": `Provided with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
+            the resulting text must be delimited by "\`\`\`".
+            Example:
+            Input: "I use grammer checker"
+            Response:
+            \`\`\`
+            I use <span title="Misspelled, correct is grammar">grammer</span> checker
+            \`\`\`
+            `},
+            {"role": "assistant", "content": "Please share your paragraph:"}
+        ]
+    }
+
+    getChatNameFromMessage(responseMessage) {
+        return 'Document';
+    }
+
+    getTextMessage(responseMessage) {
+        let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+        let result = (messageParts[0] || '').trim();
+        result += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
+        return result;
+    }
+
+    getAppContent(responseMessage) {
+        let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+        const text = messageParts[1];
+        if(!text) {
+            return null;
+        }
+
+        return this.getStyles() + `<div class="result-text">${text}</div>`;
+    }
+
+    getStyles() {
+        return `<style>
+        .result-text {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            font-color: #000000BB;
+            font-family: Arial;
+            white-space: pre-wrap;
+            border-bottom: 2px solid #4ade80;
+        }
+
+        .result-text:has(span) {
+            border-color: #fecaca;
+        }
+
+        .result-text span {
+            background-color: #fee2e2;
+        }
+        </style>`;
+    }
+}
+```
