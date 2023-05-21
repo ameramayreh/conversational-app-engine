@@ -95,7 +95,7 @@ export class SpellAndGrammarChecker extends ConversationalApp {
 
 2- Implement the following methods:
 - getDefaultMessages: 
-eturns a list of messages that till OpenAI chat API about its role in the conversation, the expected user input, how to process it, and, what is the expected response (see [OpenAI guide](https://platform.openai.com/docs/guides/chat/introduction)). It can also includes examples about the user input and/or expected response.
+Returns a list of messages that till OpenAI chat API about its role in the conversation, the expected user input, how to process it, and, what is the expected response (see [OpenAI guide](https://platform.openai.com/docs/guides/chat/introduction)). It can also includes examples about the user input and/or expected response.
 Each message is an object that contains a role and content properties: `{"role": "...", "content": "..."}`
 The `role` of first message should be "system", and the `content` is a high level description of OpenAI chat API's role in this conversation. Then it followed by one or more messages with the "user" `role`, that tells OpenAI chat API how to process and response to the user input.
 You may add a last message with role "assistant", where you ask the user to provide input.
