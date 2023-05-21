@@ -83,7 +83,18 @@ The Todo Assistant is an application that uses GPT to manage your tasks as a tod
 
 
 # Create your App
-1- Crate a class that extends ConversationApp and save it in the ./apps directory of the project folder
+Your app should extend ConversationalApp class to allow Conversational App Engine to interact with.
+The Conversational App Engine will create a single instance of your app and will interact with its inherited instance variables and methods.
+
+The following sequence diagram shows the messages between the user, Conversational App Engine, your App and OpenAI Chat API in a single chat thread.
+
+
+The following sequence diagrame shows the messages between the user, Conversational App Engine, your App and OpenAI Chat API in a single chat thread.
+![app-sequence](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/82a1ed2a-43a2-44ea-b0bd-2de31ec39e66)
+
+Please follow the steps below to implement your app:
+
+1- Crate a class that extends ConversationalApp and save it in the ./apps directory of the project folder
 ```js
 export class SpellAndGrammarChecker extends ConversationalApp {
     constructor(context) {
