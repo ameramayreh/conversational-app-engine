@@ -264,7 +264,7 @@ class ConversationalAppEngineClient {
         this.disableChat();
         this.messageform.classList.add('processing');
 
-        fetch("http://" + location.hostname + ":3000/api/chat", {
+        fetch(location.origin + "/api/chat", {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -293,7 +293,7 @@ class ConversationalAppEngineClient {
     }
 
     loadMessages(chatid) {
-        fetch("http://" + location.hostname + ":3000/api/chatmessages?userid=" + this.getUserId() + "&chatid=" + chatid, {
+        fetch(location.origin + "/api/chatmessages?userid=" + this.getUserId() + "&chatid=" + chatid, {
             method: "get",
         })
             .then(response => response.json())
@@ -317,7 +317,7 @@ class ConversationalAppEngineClient {
     loadUserChats() {
         const userid = this.getUserId();
 
-        fetch("http://" + location.hostname + ":3000/api/userchats?userid=" + userid, {
+        fetch(location.origin + "/api/userchats?userid=" + userid, {
             method: "get",
         })
             .then(response => response.json())
@@ -359,7 +359,7 @@ class ConversationalAppEngineClient {
         if (!confirm('Are you shore you want to delete this chat [' + document.getElementById('chat' + chatid).getElementsByTagName('a')[0].innerText + ']?')) {
             return;
         }
-        fetch("http://" + location.hostname + ":3000/api/userchat?userid=" + this.getUserId() + "&chatid=" + chatid, {
+        fetch(location.origin + "/api/userchat?userid=" + this.getUserId() + "&chatid=" + chatid, {
             method: "delete",
         })
             .then(response => response.json())
