@@ -66,6 +66,11 @@
     opacity: 0;
 }
 
+.capacity-indecator[style='width: 100%;'] {
+    background-color: #fecaca;
+}
+
+
 #messageform .processing-icon {
     display: none;
 }

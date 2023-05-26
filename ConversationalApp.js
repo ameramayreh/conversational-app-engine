@@ -48,7 +48,7 @@ class ConversationalApp {
      * @param {*} responseMessage the response content returned by OpenAI chat API
      * @returns 
      */
-    getTextMessage(responseMessage) { return message; }
+    getTextMessage(responseMessage) { return responseMessage; }
 
     /**
      * Returns formatted the app's business data that returned in OpenAI chat API's responseMessage (if any),

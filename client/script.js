@@ -160,6 +160,7 @@ class ConversationalAppEngineClient {
         this.contentList.length = 0;
         this.capacityIndecator.style.width = '0%';
         this.capacityIndecator.title = null;
+        this.enableChat();
     }
 
     showContent(index) {
