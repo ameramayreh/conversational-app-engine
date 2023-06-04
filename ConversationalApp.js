@@ -12,6 +12,8 @@ class ConversationalApp {
     appIconName = 'token';
 
     temperature = 1;
+    model = 'gpt-3.5-turbo';
+    modelMaxTokens =  4096;
 
     constructor(context) {
         this.context = context;
@@ -28,7 +30,12 @@ class ConversationalApp {
      * 
      * @returns array of messages
      */
-    getDefaultMessages() { return [] };
+    getInstructionMessages() { return [] };
+
+    /**
+     * @deprecated use getInstructionMessages instead
+     */
+    getDefaultMessages() { return this.getInstructionMessages(); };
 
     /**
      * Returns the title of the chat, this can be derived from OpenAI chat API's responseMessage,
@@ -48,8 +55,13 @@ class ConversationalApp {
      * @param {*} responseMessage the response content returned by OpenAI chat API
      * @returns 
      */
-    getTextMessage(responseMessage) { return responseMessage; }
-
+    getDialogText(responseMessage) { return responseMessage; }
+    
+    /**
+     * @deprecated use getDialogText instead
+     */
+    getTextMessage(responseMessage) { return this.getDialogText(responseMessage); }
+    
     /**
      * Returns formatted the app's business data that returned in OpenAI chat API's responseMessage (if any),
      * after excluding the normal conversation text.

@@ -6,8 +6,6 @@ export class ConversationalAppEngine {
     openai = null;
     defaultMesages = [];
     userMessages = {};
-    model =  "gpt-3.5-turbo";
-    modelMaxTokens =  4096;
 
     constructor(appClass) {
         this.openai = new OpenAIApi(new Configuration({
@@ -100,7 +98,7 @@ export class ConversationalAppEngine {
 
         try {
             this.openai.createChatCompletion({
-                model: this.model,
+                model: this.app.model,
                 temperature: this.app.temperature,
                 messages: messages,
             }).then((completion) => {
@@ -150,7 +148,7 @@ export class ConversationalAppEngine {
         text = text.replaceAll('{{CHAT_START_INSTRUCTIONS}}', this.app.chatStartInstruction);
         text = text.replaceAll('{{NEW_CHAT_NAME}}', this.app.newChatName);
         text = text.replaceAll('{{APP_ICON}}', this.app.appIconName);
-        text = text.replaceAll('{{MAX_TOKENS}}', this.modelMaxTokens);
+        text = text.replaceAll('{{MAX_TOKENS}}', this.app.modelMaxTokens);
         return text;
     }
 }

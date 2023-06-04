@@ -18,7 +18,7 @@ fs.readdirSync(appPath).forEach(file => {
     }
     const modFile = appPath + "/" + file;
      import(modFile).then(appModule => {
-        Object.keys(appModule).forEach(k => {
+        Object.keys(appModule).sort().forEach(k => {
             const moduleItem = appModule[k];
             if(moduleItem.prototype instanceof ConversationalApp) {
                 engines[moduleItem.name] = new ConversationalAppEngine(moduleItem);
