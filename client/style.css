@@ -58,6 +58,10 @@
     vertical-align: middle;
 }
 
+.app-badge {
+    font-size: xx-small;
+}
+
 .capacity-indecator {
     transition: 320ms;
 }

@@ -384,7 +384,12 @@ class ConversationalAppEngineClient {
     loadAppsMenu() {
         const appsMenu = document.getElementById('appsmenu');
         const appsList = window['appsList'] || [];
-        appsMenu.innerHTML = appsList.map(a => `<a href="/?app=${a.app}" title="${a.name}" class="flex flex-col items-center text-center mb-4 ${a.current ? ' text-white' : 'text-gray-600 hover:text-gray-50'}"><i class="material-icons">${a.icon}</i></a>`).join('');
+        appsMenu.innerHTML = appsList.map(a => {
+            const appLinkClasses = `flex flex-col relative items-center text-center mb-4 ${a.current ? ' text-white' : 'text-gray-600 hover:text-gray-50'}`;
+            const appIcon = `<i class="material-icons">${a.icon}</i>`;
+            const appBadge = a.badge ? `<span class="app-badge absolute -top-2 -right-4 bg-red-500 text-white font-bold px-1 rounded-full">${a.badge}</span>` : '';
+            return `<a href="/?app=${a.app}" title="${a.name}" class="${appLinkClasses}">${appIcon}${appBadge}</a>`;
+        }).join('');
     }
 
     toggleAppsMenu() {

@@ -17,14 +17,18 @@ fs.readdirSync(appPath).forEach(file => {
         return;
     }
     const modFile = appPath + "/" + file;
-     import(modFile).then(appModule => {
-        Object.keys(appModule).sort().forEach(k => {
-            const moduleItem = appModule[k];
-            if(moduleItem.prototype instanceof ConversationalApp) {
-                engines[moduleItem.name] = new ConversationalAppEngine(moduleItem);
-            }
+    try {
+        import(modFile).then(appModule => {
+           Object.keys(appModule).sort().forEach(k => {
+               const moduleItem = appModule[k];
+               if(moduleItem.prototype instanceof ConversationalApp) {
+                   engines[moduleItem.name] = new ConversationalAppEngine(moduleItem);
+               }
+           });
         });
-     });
+    } catch {
+        console.error(`Failed to load app from file ${modFile}`);
+    }
 });
 
 
@@ -47,7 +51,12 @@ app.get('/', (req, res) => {
             res.cookie('app', appName);
             res.writeHead(200, {'Content-Type': 'text/html'});
             let html = engines[appName].substituteText(data.toString());
-            const appsList = Object.keys(engines).map(k => ({'app': k, 'name': engines[k].app.appName, 'current': k === appName, 'icon': engines[k].app.appIconName}));
+            const appsList = Object.keys(engines).sort().map(k => ({
+                'app': k,
+                'name': engines[k].app.appName,
+                'current': k === appName,
+                'icon': engines[k].app.appIconName,
+                'badge': engines[k].app.model == 'gpt-4'? 'GPT4' : null}));
             html += '<script> var appsList = ' + JSON.stringify(appsList) + ';</script>';
             res.end(html);
         }
