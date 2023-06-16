@@ -25,7 +25,7 @@ To use Conversational App Engine, you will need to have Node.js and npm installe
 
 Next, set the environment variable OPENAI_API_KEY to your OpenAI API key. This will allow Conversational App Engine to authenticate your requests to the API.
 
-To implement your own app, create a new class in the apps directory that extends the ConversationApp class. You will need to implement several methods, such as getDefaultMessages, getChatNameFromMessage, and getTextMessage, to define your app's behavior. You can also overwrite any of the default messages, such as appName and chatListTitle, to customize the user interface.
+To implement your own app, create a new class in the apps directory that extends the ConversationApp class. You will need to implement several methods, such as getInstructionMessages, getChatNameFromMessage, and getDialogText, to define your app's behavior. You can also overwrite any of the default messages, such as appName and chatListTitle, to customize the user interface.
 
 Once you have created your app, import it into the index.js file and use it to initialize a new instance of ConversationalAppEngine. Then, run node ./index.js in the project directory and navigate to http://localhost:3000/ to see your app in action.
 
@@ -131,14 +131,14 @@ export class SpellAndGrammarChecker extends ConversationalApp {
 
 
 2- Implement the following methods:
-- getDefaultMessages: 
+- getInstructionMessages: 
 Returns a list of messages that till OpenAI chat API about its role in the conversation, the expected user input, how to process it, and, what is the expected response (see [OpenAI guide](https://platform.openai.com/docs/guides/chat/introduction)). It can also includes examples about the user input and/or expected response.
 Each message is an object that contains a role and content properties: `{"role": "...", "content": "..."}`
 The `role` of first message should be "system", and the `content` is a high level description of OpenAI chat API's role in this conversation. Then it followed by one or more messages with the "user" `role`, that tells OpenAI chat API how to process and response to the user input.
 You may add a last message with role "assistant", where you ask the user to provide input.
 
 ```js
-getDefaultMessages() {
+getInstructionMessages() {
     return [
         {"role": "system", "content": "You are a spell and grammar checker. You can help with identifying different types of mistakes in a text."},
         {"role": "user", "content": `Provided with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
@@ -164,11 +164,11 @@ getChatNameFromMessage(responseMessage) {
 }
 ```
 
-- getTextMessage:
+- getDialogText:
 Returns the normal conversation text returned in OpenAI chat API's responseMessage (if any) after excluding the required app's business data.
 
 ```js
-getTextMessage(responseMessage) {
+getDialogText(responseMessage) {
     let messageParts = responseMessage.split(/```+[^\n]*\n?/);
     let result = (messageParts[0] || '').trim();
     result += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
@@ -248,7 +248,7 @@ export class SpellAndGrammarChecker extends ConversationalApp {
         super(context);
     }
 
-    getDefaultMessages() {
+    getInstructionMessages() {
         return [
             {"role": "system", "content": "You are a spell and grammar checker. You can help with identifying different types of mistakes in a text."},
             {"role": "user", "content": `Provided with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
@@ -268,7 +268,7 @@ export class SpellAndGrammarChecker extends ConversationalApp {
         return 'Document';
     }
 
-    getTextMessage(responseMessage) {
+    getDialogText(responseMessage) {
         let messageParts = responseMessage.split(/```+[^\n]*\n?/);
         let result = (messageParts[0] || '').trim();
         result += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());

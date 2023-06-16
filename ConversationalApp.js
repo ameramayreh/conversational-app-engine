@@ -12,11 +12,10 @@ class ConversationalApp {
     appIconName = 'token';
 
     temperature = 1;
-    model = 'gpt-3.5-turbo';
+    model = 'gpt-3.5-turbo-0613';
     modelMaxTokens =  4096;
 
-    constructor(context) {
-        this.context = context;
+    constructor() {
     }
 
     /**
@@ -38,15 +37,17 @@ class ConversationalApp {
     getDefaultMessages() { return this.getInstructionMessages(); };
 
     /**
-     * Returns the title of the chat, this can be derived from OpenAI chat API's responseMessage,
+     * Returns the title of the chat or a promise that resolves to the title, this can be derived from OpenAI chat API's responseMessage,
      * especially if you instruct to include it in the response in the default messages.
      * If no title can be derived from the message you can return a constant value.
      * Or return null to keep the previous chat title.
      * 
      * @param {*} responseMessage the response content returned by OpenAI chat API
+     * @param {*} userMessage the user message resulted on this response
+     * @param {*} chat the current chat
      * @returns the chat title
      */
-    getChatNameFromMessage(responseMessage) { return 'Unknown'; };
+    getChatNameFromMessage(responseMessage, userMessage, chat) { return 'Unknown'; };
 
     /**
      * Returns the normal conversation text returned in OpenAI chat API's responseMessage (if any)

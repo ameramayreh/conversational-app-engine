@@ -1,23 +1,25 @@
 import { ConversationalApp } from '../ConversationalApp.js';
 
 export class StatisticalDataAnalyzer extends ConversationalApp {
-    appName = 'Statistical Data Analyzer';
-    chatListTitle = 'My Data';
-    newChatLabel = 'New Data';
-    chatStartInstruction = 'Please provide me with the data you want to analyze';
-    appIconName = 'insert_chart';
+  appName = 'Statistical Data Analyzer';
+  chatListTitle = 'My Data';
+  newChatLabel = 'New Data';
+  chatStartInstruction = 'Please provide me with the data you want to analyze';
+  appIconName = 'insert_chart';
 
-    constructor(context) {
-        super(context);
-        this.context = context;
-    }
+  temperature = 0;
 
-    getDefaultMessages() {
-        return [
-            { "role": "system", "content": "You are statistical data analyzer, you help in extract and visualize statistical data from paragraph of text"},
-            { "role": "user", "content": `I'll provide you with a text that may contain statistical data.
+  constructor() {
+    super();
+  }
+
+  getDefaultMessages() {
+    return [
+      { "role": "system", "content": "You are statistical data analyzer, you help in extract and visualize statistical data from paragraph of text" },
+      {
+        "role": "user", "content": `I'll provide you with a text that may contain statistical data.
             If the text does not contain statistical data, simply response with 'No statistical data'.
-            If there is statistical data, please extract them as a table (in markdown format) delimited by 4 equal marks (====).
+            If there is statistical data, please extract them as a table (in markdown format) delimited by 4 equal marks ====.
             After that, please provide a YAML structure that represents a config for Chart.js library based on the following JSON schema:
             ${JSON.stringify(this.getJSONSchma())}
 
@@ -32,43 +34,45 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
             \`\`\`
             {Trends}
             ` },
-            { "role": "assistant", "content": "Sure, please provide your text"}
-        ];
+      { "role": "assistant", "content": "Sure, please provide your text" }
+    ];
+  }
+
+  getChatNameFromMessage(message) {
+    const config = this.getChartConfig(message);
+    if (!config) {
+      return null;
+    }
+    return config.options?.title?.text || null;
+  }
+
+  getTextMessage(message) {
+    let messageParts = message.split(/```[^\n]*\n?/);
+    let responseMessage = (messageParts[0] || '').trim();
+    responseMessage += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
+    messageParts = responseMessage.split(/===[^\n]*\n?/);
+    responseMessage = (messageParts[0] || '').trim();
+    responseMessage += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
+    return responseMessage;
+  }
+
+  getAppContent(message) {
+    const config = this.getChartConfig(message);
+    const messageParts = message.split(/===[^\n]*\n?/);
+    let data = messageParts[1] || '';
+    if (!config && !data) {
+      return '';
     }
 
-    getChatNameFromMessage(message) {
-        const config = this.getChartConfig(message);
-        if(!config) {
-            return null;
-        }
-        return config.options?.title?.text || null;
+    if (data) {
+      data = JSON.stringify(data);
     }
 
-    getTextMessage(message) {
-        let messageParts = message.split(/```[^\n]*\n?/);
-        let responseMessage = (messageParts[0] || '').trim();
-        responseMessage += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
-        messageParts = responseMessage.split(/===[^\n]*\n?/);
-        responseMessage = (messageParts[0] || '').trim();
-        responseMessage += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
-        return responseMessage;
-    }
+    const dataVar = data ? `${data} || ` : '';
 
-    getAppContent(message) {
-        const config = this.getChartConfig(message);
-        const messageParts = message.split(/===[^\n]*\n?/);
-        let data = messageParts[1] || '';
-        if(!config && !data) {
-            return '';
-        }
-
-        if(data) {
-            data = JSON.stringify(data);
-        }
-
-        return this.getStyles() + '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script><div class="list-container"><canvas id="myChart"></canvas><div id="data-table"></div></div>' + `<script>
+    return this.getStyles() + '<script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script><div class="list-container"><canvas id="myChart"></canvas><div id="data-table"></div></div>' + `<script>
         clearTimeout(window['charttimeout']);
-        window['data'] = ${data} || window['data'] || '';
+        window['data'] = ${dataVar}window['data'] || '';
         window['charttimeout'] = setTimeout(()=> {
             new Chart(document.getElementById('myChart'), ${JSON.stringify(config)});
             if(window['data']) {
@@ -77,21 +81,21 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
         }, 500);
 
         </script>`;
+  }
+
+  getChartConfig(message) {
+    const messageParts = message.split(/```[^\n]*\n?/);
+
+    let chartConfig = messageParts[1] || '';
+    if (!chartConfig) {
+      return '';
     }
 
-    getChartConfig(message) {
-        const messageParts = message.split(/```[^\n]*\n?/);
+    return this.parseYaml(chartConfig.trim());
+  }
 
-        let chartConfig = messageParts[1] || '';
-        if(!chartConfig) {
-            return '';
-        }
-
-        return this.parseYaml(chartConfig.trim());
-    }
-
-    getStyles() {
-        return `<style>
+  getStyles() {
+    return `<style>
         table {
             background-color: #f8f9fa;
             color: #202122;
@@ -115,138 +119,135 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
             flex-direction: column;
         }
         </style>`;
-    }
+  }
 
-    getJSONSchma() {
-        return {
-            "$schema": "http://json-schema.org/draft-07/schema#",
-            "title": "ChartConfig",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "line",
-                  "bar",
-                  "pie",
-                  "doughnut",
-                  "radar",
-                  "polarArea",
-                  "bubble",
-                  "scatter"
-                ]
-              },
-              "data": {
+  getJSONSchma() {
+    return {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChartConfig",
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "line",
+            "bar",
+            "pie",
+            "doughnut",
+            "radar",
+            "polarArea",
+            "bubble",
+            "scatter"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "labels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
                 "type": "object",
                 "properties": {
-                  "labels": {
+                  "label": {
+                    "type": "string"
+                  },
+                  "data": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "type": "number"
                     }
                   },
-                  "datasets": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "label": {
-                          "type": "string"
-                        },
-                        "data": {
-                          "type": "array",
-                          "items": {
-                            "type": "number"
+                  "backgroundColor": {
+                    "type": "string"
+                  },
+                  "borderColor": {
+                    "type": "string"
+                  },
+                  "borderWidth": {
+                    "type": "number"
+                  }
+                },
+                "required": ["label", "data"]
+              }
+            }
+          },
+          "required": ["labels", "datasets"]
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "object",
+              "properties": {
+                "display": {
+                  "type": "boolean"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
+            "legend": {
+              "type": "object",
+              "properties": {
+                "display": {
+                  "type": "boolean"
+                },
+                "position": {
+                  "type": "string",
+                  "enum": ["top", "bottom", "left", "right"]
+                }
+              }
+            },
+            "scales": {
+              "type": "object",
+              "properties": {
+                "xAxes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "scaleLabel": {
+                        "type": "object",
+                        "properties": {
+                          "display": {
+                            "type": "boolean"
+                          },
+                          "labelString": {
+                            "type": "string"
                           }
-                        },
-                        "backgroundColor": {
-                          "type": "string"
-                        },
-                        "borderColor": {
-                          "type": "string"
-                        },
-                        "borderWidth": {
-                          "type": "number"
                         }
-                      },
-                      "required": ["label", "data"]
+                      }
                     }
                   }
                 },
-                "required": ["labels", "datasets"]
-              },
-              "options": {
-                "type": "object",
-                "properties": {
-                  "title": {
+                "yAxes": {
+                  "type": "array",
+                  "items": {
                     "type": "object",
                     "properties": {
-                      "display": {
-                        "type": "boolean"
-                      },
-                      "text": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "legend": {
-                    "type": "object",
-                    "properties": {
-                      "display": {
-                        "type": "boolean"
-                      },
-                      "position": {
-                        "type": "string",
-                        "enum": ["top", "bottom", "left", "right"]
-                      }
-                    }
-                  },
-                  "scales": {
-                    "type": "object",
-                    "properties": {
-                      "xAxes": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "scaleLabel": {
-                              "type": "object",
-                              "properties": {
-                                "display": {
-                                  "type": "boolean"
-                                },
-                                "labelString": {
-                                  "type": "string"
-                                }
-                              }
-                            }
+                      "ticks": {
+                        "type": "object",
+                        "properties": {
+                          "beginAtZero": {
+                            "type": "boolean"
                           }
                         }
                       },
-                      "yAxes": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "ticks": {
-                              "type": "object",
-                              "properties": {
-                                "beginAtZero": {
-                                  "type": "boolean"
-                                }
-                              }
-                            },
-                            "scaleLabel": {
-                              "type": "object",
-                              "properties": {
-                                "display": {
-                                  "type": "boolean"
-                                },
-                                "labelString": {
-                                  "type": "string"
-                                }
-                              }
-                            }
+                      "scaleLabel": {
+                        "type": "object",
+                        "properties": {
+                          "display": {
+                            "type": "boolean"
+                          },
+                          "labelString": {
+                            "type": "string"
                           }
                         }
                       }
@@ -254,8 +255,11 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
                   }
                 }
               }
-            },
-            "required": ["type", "data"]
-          };
-    }
+            }
+          }
+        }
+      },
+      "required": ["type", "data"]
+    };
+  }
 }

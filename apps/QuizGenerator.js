@@ -7,9 +7,8 @@ export class QuizGenerator extends ConversationalApp {
     chatStartInstruction = 'Please provide the article/document that you want to generate a quiz for.';
     appIconName = 'quiz';
 
-    constructor(context) {
-        super(context);
-        this.context = context;
+    constructor() {
+        super();
     }
 
     getDefaultMessages() {

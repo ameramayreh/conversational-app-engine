@@ -9,9 +9,8 @@ export class QuoteImageGenerator extends ConversationalApp {
 
     temperature = 1;
 
-    constructor(context) {
-        super(context);
-        this.context = context;
+    constructor() {
+        super();
     }
 
     getDefaultMessages() {

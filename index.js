@@ -149,7 +149,7 @@ app.get('/api/chatmessages', async (req, res) => {
         return;
     }
 
-    res.json(engines[appName].getUserChat(userid, chatid));
+    res.json(await Promise.resolve(engines[appName].getUserChat(userid, chatid)));
 });
 
 app.post('/api/chat', (req, res) => {

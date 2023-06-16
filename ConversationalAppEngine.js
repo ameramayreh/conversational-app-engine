@@ -12,7 +12,7 @@ export class ConversationalAppEngine {
             apiKey: process.env.OPENAI_API_KEY,
         }));
 
-        this.app = new appClass(this);
+        this.app = new appClass();
         this.defaultMesages = this.app.getDefaultMessages();
 
         if(!fs.existsSync('./data/')) {
@@ -56,15 +56,14 @@ export class ConversationalAppEngine {
     }
 
     getUser(userId) {
-        const user = this.userMessages[userId] = this.userMessages[userId] || {};
-        return user;
+        return this.userMessages[userId] = this.userMessages[userId] || {};
     }
 
     getChat(user, chatId) {
-        return user[chatId] = user[chatId] || { messages: [...this.defaultMesages], name: "", usage: [] };
+        return user[chatId] = user[chatId] || { messages: [...this.defaultMesages], name: "", usage: [], state: {} };
     }
 
-    getUserChat(userid, chatid) {
+    async getUserChat(userid, chatid) {
         const user = this.getUser(userid);
         const chat = this.getChat(user, chatid);
         const chatMessages = [];
@@ -72,12 +71,14 @@ export class ConversationalAppEngine {
         let i = 0;
         for (const message of chat.messages.slice(this.defaultMesages.length)) {
             const msg = {
-                message: this.app.getTextMessage(message.content),
-                appContent: this.app.getAppContent(message.content)
+                message: await Promise.resolve(this.app.getTextMessage(message.content)),
+                appContent: await Promise.resolve(this.app.getAppContent(message.content))
             };
+
             if (message.role == 'assistant') {
                 msg.usage = chat.usage[i++];
             }
+
             chatMessages.push(msg);
         }
         return chatMessages;
@@ -101,12 +102,12 @@ export class ConversationalAppEngine {
                 model: this.app.model,
                 temperature: this.app.temperature,
                 messages: messages,
-            }).then((completion) => {
+            }).then(async (completion) => {
                 console.log("Recived from ChatGPT: ");
                 console.log(JSON.stringify(completion.data));
                 const responseMessage = completion.data.choices[0].message.content;
 
-                const chatName = this.app.getChatNameFromMessage(responseMessage);
+                let chatName = await Promise.resolve(this.app.getChatNameFromMessage(responseMessage, message, chat));
                 if (chatName) {
                     chat.name = chatName;
                 }
@@ -117,8 +118,8 @@ export class ConversationalAppEngine {
 
                 const response = {
                     status: 'success',
-                    message: this.app.getTextMessage(responseMessage),
-                    appContent: this.app.getAppContent(responseMessage),
+                    message: await Promise.resolve(this.app.getTextMessage(responseMessage)),
+                    appContent: await Promise.resolve(this.app.getAppContent(responseMessage)),
                     chatName: chat.name,
                     usage: completion.data.usage
                 };

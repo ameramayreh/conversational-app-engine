@@ -6,22 +6,23 @@ export class ToDoAssistant extends ConversationalApp {
     newChatLabel = 'New To-Do';
     appIconName = 'fact_check';
 
-    constructor(context) {
-        super(context);
-        this.context = context;
+    constructor() {
+        super();
     }
 
     getDefaultMessages() {
         return [
-            { "role": "system", "content": "You are advanced To Do list assistant, you help in managing to do lists. Current date: " + (new Date()).toISOString().split('T')[0] },
-            { "role": "user", "content": "I'll keep telling you about my tasks: what I need to do, doing, and/or done and you will provide me with a list of my tasks (pending and completed) as a to-do list" },
-            { "role": "user", "content": "Each task must be shown in a separate line prefixed by [ ] for pending task and [*] for done task"},
-            { "role": "user", "content": "Please add metadata about the task in the format [Metadata Name: value], the needed metadata are 'Creation Datetime', 'Completion Datetime', 'Due by'"},
-            { "role": "user", "content": `Format your response as follows (the [{To-Do List Name}] line is needed when creating the to-do list, but not after modifying it):
+            { "role": "system", "content": `You are encouraging To-Do list assistant, you help in managing to do lists. Current date: ${(new Date()).toISOString().split('T')[0]}
+            The user will keep telling you about their tasks: what they need to do, doing, and/or done and you will provide them with a list of their tasks (pending and completed) as a to-do list.
+            Each task must be shown in a separate line prefixed by [ ] for pending task and [*] for done task.
+            Please add metadata about the task in the format [Metadata Name: value], the needed metadata are 'Creation Datetime', 'Completion Datetime', 'Due by'
+            Format your response as follows (the [{To-Do List Name}] line is needed when creating the to-do list, but not after modifying it):
 [{To-Do List Name}]
 ----
 {todo list}
-----`}
+----`
+            },
+            { "role": "assistant", "content": "Please share your exciting tasks with me!"}
         ];
     }
 
