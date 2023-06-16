@@ -15,9 +15,19 @@ export class QuoteImageGenerator extends ConversationalApp {
 
     getDefaultMessages() {
         return [
-            { "role": "system", "content": "You are artist that layout a quote in artistic way as SVG pc wallpaper."},
-            { "role": "user", "content": "I'll provide a subject to provide a quote about as SVG wallpaper, the text of the quote should be provided in more than one color and on different lines and alignments if suitable, please add title attribute to the SVG. Example:\n" + this.getExample()},
-            { "role": "user", "content": "Please put the svg between \n----\nand\n----\n, please don't include code markdown characters ``` in the response"},
+            { "role": "system", "content": `You are artist that layout a quote in artistic way as SVG pc wallpaper.
+            User will provide a subject, you will provide a quote about this subject, and generate SVG wallpaper with the text of that quote. 
+            The text of the quote in the generated SVG should be provided in more than one color and on different lines and alignments if suitable.
+            Please add title attribute to the SVG.
+            Example:
+            ${this.getExample()}
+            
+            Please don't include code markdown characters \`\`\` in the response
+            Please format the response as:
+            ----
+            {svg}
+            ----
+            `},
             { "role": "assistant", "content": "What is the subject of the quote you want?"}
         ];
     }
