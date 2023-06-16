@@ -108,7 +108,7 @@ app.delete('/api/userchat', async (req, res) => {
     const userid = req.query.userid;
     const chatid = req.query.chatid;
     const appName = getAppNameCookieValue(req);
-    console.log("Recived [Delete Chat: '" + chatid + "'] from user: " + userid);
+    console.log("Received [Delete Chat: '" + chatid + "'] from user: " + userid);
 
     if (!userid) {
         res.status(400).send({
@@ -133,7 +133,7 @@ app.get('/api/chatmessages', async (req, res) => {
     const userid = req.query.userid;
     const chatid = req.query.chatid;
     const appName = getAppNameCookieValue(req);
-    console.log("Recived [Get Chat: '" + chatid + "'] from user: " + userid);
+    console.log("Received [Get Chat: '" + chatid + "'] from user: " + userid);
 
     if (!userid) {
         res.status(400).send({
@@ -157,7 +157,7 @@ app.post('/api/chat', (req, res) => {
     const userid = req.body.userid;
     const chatid = req.body.chatid;
     const appName = getAppNameCookieValue(req);
-    console.log("Recived Message from user [" + userid + "], chat [" + chatid + "]: " + message);
+    console.log("Received Message from user [" + userid + "], chat [" + chatid + "]: " + message);
 
     if (!userid) {
         res.status(400).send({

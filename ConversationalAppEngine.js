@@ -4,7 +4,7 @@ import * as fs from 'node:fs';
 export class ConversationalAppEngine {
     userMessages = {};
     openai = null;
-    defaultMesages = [];
+    defaultMessages = [];
     userMessages = {};
 
     constructor(appClass) {
@@ -13,7 +13,7 @@ export class ConversationalAppEngine {
         }));
 
         this.app = new appClass();
-        this.defaultMesages = this.app.getDefaultMessages();
+        this.defaultMessages = this.app.getDefaultMessages();
 
         if(!fs.existsSync('./data/')) {
             fs.mkdirSync('./data/');
@@ -60,7 +60,7 @@ export class ConversationalAppEngine {
     }
 
     getChat(user, chatId) {
-        return user[chatId] = user[chatId] || { messages: [...this.defaultMesages], name: "", usage: [], state: {} };
+        return user[chatId] = user[chatId] || { messages: [...this.defaultMessages], name: "", usage: [], state: {} };
     }
 
     async getUserChat(userid, chatid) {
@@ -69,7 +69,7 @@ export class ConversationalAppEngine {
         const chatMessages = [];
 
         let i = 0;
-        for (const message of chat.messages.slice(this.defaultMesages.length)) {
+        for (const message of chat.messages.slice(this.defaultMessages.length)) {
             const msg = {
                 message: await Promise.resolve(this.app.getTextMessage(message.content)),
                 appContent: await Promise.resolve(this.app.getAppContent(message.content))
@@ -103,7 +103,7 @@ export class ConversationalAppEngine {
                 temperature: this.app.temperature,
                 messages: messages,
             }).then(async (completion) => {
-                console.log("Recived from ChatGPT: ");
+                console.log("Received from ChatGPT: ");
                 console.log(JSON.stringify(completion.data));
                 const responseMessage = completion.data.choices[0].message.content;
 

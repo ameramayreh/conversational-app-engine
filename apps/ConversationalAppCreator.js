@@ -20,15 +20,15 @@ export class ConversationalAppCreator extends ConversationalApp {
             { "role": "user", "content": `A conversational app runs under Conversational App Engine (CAE), that manages taking the user input and sending it to GPT to generate the intended response based on the App's instructions.
             A conversational app is responsible to provide CAE with:
             [1] instructions to GPT about its role and how to deal with user input, and how to prepare the intended response and the format of that response.
-            [2] processing the GPT's generated response and format it based on the app requirements with a high quality and user frindly UI.
+            [2] processing the GPT's generated response and format it based on the app requirements with a high quality and user friendly UI.
             `},
             { "role": "user", "content": `I'll provide you with a description of the intended app, a description of the user input and a description of expected output. You will:
             1) Decide about the role of GPT and prepare instruction messages defining this role, e.g., if the user describes the needed app with "the app needs to check for spelling and grammar mistakes in a text provided by the app's user", the message could be "You are spelling and grammar assistant, you help in identifying ...".
             2) Decide about the input for the app and prepare instruction to explain it to GPT, e.g., if the user describes the needed app with "the app needs to check for spelling and grammar mistakes in a text provided by the app's user", the instruction message could be "I'll provide you with a text paragraph(s) ...".
             3) Decide about the desired output from the app and prepare instructions for GTP on how to handle the input (may be in a step by step approach), and the expected generated response, e.g. if the user describes the needed app with "the app needs to extract the statistical data from a text provided by the app's user, and display it as a table", the instruction message could be "You will identify the statistical data in the provided text, and will format it as html table, and response as follows:\n\`\`\`\n{HTML_TABLE}\n\`\`\`".
             4) Decide about how to extract the desired output from the response, and how to extract the dialog text (as GTP may include dialog text in addition to the desired output), e.g. for the example in the previous step's example, you me split the response message by '\`\`\`', the desired output will be the second part in the splitted text, and the dialog text will be the other parts.
-            5) Decide about how to format the extracted output to meet the app's output requirements. This should be browser supported format, usually HTML and any supported CSS or js if needed. Please include the result in a div with suitable background color, consider a high quality and user frindly UI.
-            6) Utilizing the outcomes of the previous steps, Generate the conversational app as a nodejs class that extends the 'ConversationalApp' class defined below, it must be a fully functional class, please keep the class size as small as possible (no method comments at all), please don't provie any explanation:
+            5) Decide about how to format the extracted output to meet the app's output requirements. This should be browser supported format, usually HTML and any supported CSS or js if needed. Please include the result in a div with suitable background color, consider a high quality and user friendly UI.
+            6) Utilizing the outcomes of the previous steps, Generate the conversational app as a nodejs class that extends the 'ConversationalApp' class defined below, it must be a fully functional class, please keep the class size as small as possible (no method comments at all), please don't provide any explanation:
 \`\`\`
 import yaml from 'js-yaml';
 
@@ -102,7 +102,7 @@ Make sure the generated class has the string delimiting characters (', ", \`) ar
 
 If a js library will be used with the up output, make sure to use setTimeout after including the library before using it, example:
 \`\`\`
-<div class="content-contianer">
+<div class="content-container">
     ...
     <pre class=".mermaid">...</pre>
     ...
@@ -290,7 +290,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
             If the text does not contain statistical data, simply response with 'No statistical data'.
             If there is statistical data, please extract them as a table (in markdown format) delimited by 4 equal marks (====).
             After that, please provide a YAML structure that represents a config for Chart.js library based on the following JSON schema:
-            \${JSON.stringify(this.getJSONSchma())}
+            \${JSON.stringify(this.getJSONSchema())}
 
             The YAML structure must be delimited by \\\`\\\`\\\`.
             After that list important trends in the extracted data if any.
@@ -307,7 +307,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
         ];
     }
 
-    // Get the converation name from GTP generated response
+    // Get the conversation name from GTP generated response
     getChatNameFromMessage(responseMessage) {
         const config = this.getChartConfig(responseMessage);
         if(!config) {
@@ -391,7 +391,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
         </style>\`;
     }
 
-    getJSONSchma() {
+    getJSONSchema() {
         return {
           /* JSON Schema for Chart.js */
           };
@@ -399,7 +399,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
 }
         \`\`\`
 
-        Exampe #2: To-do Assistant:
+        Example #2: To-do Assistant:
         \`\`\`
         import { ConversationalApp } from '../ConversationalApp.js';
 

@@ -1,7 +1,7 @@
 # About
 Conversational App Engine is a free engine that helps developers prototype chat-based apps quickly using OpenAI's chat completion API. With Conversational App Engine, developers can focus on designing their app's functionality while utilizing the power of Conversational App Engine to handle chat management.
 
-A Conversational App, running on Conversational App Engine, utilizes OpenAI's chat completion API to generate textulat data based on user input. It then processes the generated data and presents it in a more useful visual format, usually. For detailed technical information about creating a Conversational App, please refer to the [Create your App](#create-your-app) section.
+A Conversational App, running on Conversational App Engine, utilizes OpenAI's chat completion API to generate textual data based on user input. It then processes the generated data and presents it in a more useful visual format, usually. For detailed technical information about creating a Conversational App, please refer to the [Create your App](#create-your-app) section.
 
 This project includes several [demo apps](#demos) that showcase different techniques for implementing Conversational Apps using the Conversational App Engine.
 
@@ -15,7 +15,7 @@ We strongly believe in the immense potential of GPT technology (and generative A
  - [Create your App](#create-your-app)
 
 # History
-Conversational App Engine was initially created as a demonstration of how OpenAI's completion API can be used to build a form designer. However, we quickly realized that the same technology could be applied to a wide range of use cases. Our goal is to make implementing GPT based apps accessable to a wide range of developers and innovators.
+Conversational App Engine was initially created as a demonstration of how OpenAI's completion API can be used to build a form designer. However, we quickly realized that the same technology could be applied to a wide range of use cases. Our goal is to make implementing GPT based apps accessible to a wide range of developers and innovators.
 
 ![History-Form-Designer-slower-80](https://user-images.githubusercontent.com/129025554/229411348-b2d4da89-bce9-483d-93b0-29ec698172c6.gif)
 
@@ -29,7 +29,7 @@ To implement your own app, create a new class in the apps directory that extends
 
 Once you have created your app, import it into the index.js file and use it to initialize a new instance of ConversationalAppEngine. Then, run node ./index.js in the project directory and navigate to http://localhost:3000/ to see your app in action.
 
-## Prerequisets
+## Prerequisites
 * [An OpenAI API Key](https://platform.openai.com/account/api-keys)
 * [Nodejs and npm](https://nodejs.org/en/download)
 * [Git (Optional)](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -115,7 +115,7 @@ The Conversational App Engine will create a single instance of your app and will
 The following sequence diagram shows the messages between the user, Conversational App Engine, your App and OpenAI Chat API in a single chat thread.
 
 
-The following sequence diagrame shows the messages between the user, Conversational App Engine, your App and OpenAI Chat API in a single chat thread.
+The following sequence diagram shows the messages between the user, Conversational App Engine, your App and OpenAI Chat API in a single chat thread.
 ![app-sequence](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/82a1ed2a-43a2-44ea-b0bd-2de31ec39e66)
 
 Please follow the steps below to implement your app:

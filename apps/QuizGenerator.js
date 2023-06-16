@@ -23,7 +23,7 @@ export class QuizGenerator extends ConversationalApp {
             { "role": "system", "content": "You are Quizzer, the quiz generator."},
             { "role": "user", "content": mainMessage},
             { "role": "user", "content": "Please don't include code markdown characters ``` in the response."},
-            { "role": "assistant", "content": "Plese provide the content that you would like me to generate a quiz for."}
+            { "role": "assistant", "content": "Please provide the content that you would like me to generate a quiz for."}
         ];
     }
 
@@ -55,7 +55,7 @@ export class QuizGenerator extends ConversationalApp {
             return null;
         }
 
-        let quizHtml = '<div id="quiz"><div id="mark" class="circle-sketch-highlight"> </div><form onsubmit="void(this.parentElement.classList.toggle(\'answerd\')); calculateMark(); return false;" onreset="resetQuestions();"><h1 id="quiztitle">' + quizInfo.QuizTitle + '</h1><ul>';
+        let quizHtml = '<div id="quiz"><div id="mark" class="circle-sketch-highlight"> </div><form onsubmit="void(this.parentElement.classList.toggle(\'answered\')); calculateMark(); return false;" onreset="resetQuestions();"><h1 id="quiztitle">' + quizInfo.QuizTitle + '</h1><ul>';
         const questions = quizInfo.Questions || [];
         let questionNumber = 0;
         for(let question of questions) {
@@ -70,7 +70,7 @@ export class QuizGenerator extends ConversationalApp {
 
         quizHtml += '</ul><div class="footer-actions"><input type="submit" value="Submit" /> <input type="reset" value="Retry" /><div></form></div>';
             
-        return this.getJS() + '<button class="download-button" onclick="downloadAsHTMLFile()">Download HTML</button> <button class="download-button" onclick="downloadAsGIFTFile()">Download GIFT</button><div id="resutl-container-html" class="result-container">' + this.getStyles() + this.getContentJS() + quizHtml + '</div>';
+        return this.getJS() + '<button class="download-button" onclick="downloadAsHTMLFile()">Download HTML</button> <button class="download-button" onclick="downloadAsGIFTFile()">Download GIFT</button><div id="result-container-html" class="result-container">' + this.getStyles() + this.getContentJS() + quizHtml + '</div>';
     }
 
     getStyles() {
@@ -103,12 +103,12 @@ export class QuizGenerator extends ConversationalApp {
             display: none;
         }
 
-        #resutl-container-html #quiz .circle-sketch-highlight {
+        #result-container-html #quiz .circle-sketch-highlight {
             right: 60px;
             top: 120px;
         }
 
-        #quiz.answerd .circle-sketch-highlight {
+        #quiz.answered .circle-sketch-highlight {
             display: block;
         }
           
@@ -218,17 +218,17 @@ export class QuizGenerator extends ConversationalApp {
             line-height: 22px;
         }
 
-        #quiz.answerd h3 {
+        #quiz.answered h3 {
             background-color: #e9b5b599;
         }
-        #quiz.answerd h3 span {
+        #quiz.answered h3 span {
             background-color: #e9b5b5;
         }
 
-        #quiz.answerd .qc h3 {
+        #quiz.answered .qc h3 {
             background-color: #b5e9bd99;
         }
-        #quiz.answerd .qc h3 span {
+        #quiz.answered .qc h3 span {
             background-color: #b5e9bd;
         }
 
@@ -247,11 +247,11 @@ export class QuizGenerator extends ConversationalApp {
             margin-right: 5px;
         }
 
-        #quiz.answerd .question input[type=radio]:checked+span {
+        #quiz.answered .question input[type=radio]:checked+span {
             color: red;
             font-weight: bold;
         }
-        #quiz.answerd .question input[type=radio][data-correct=true]:checked+span {
+        #quiz.answered .question input[type=radio][data-correct=true]:checked+span {
             color: green;
             font-weight: bold;
         }
@@ -267,7 +267,7 @@ export class QuizGenerator extends ConversationalApp {
         }
 
         function resetQuestions(){
-            document.getElementById('quiz').classList.remove('answerd');
+            document.getElementById('quiz').classList.remove('answered');
             var correctAnswers = document.querySelectorAll('#quiz .qc');
             correctAnswers.forEach((element) => {
                 element.classList.remove('qc');
@@ -280,7 +280,7 @@ export class QuizGenerator extends ConversationalApp {
         return `<script>
         function downloadAsHTMLFile() {
             resetQuestions();
-            var text = document.getElementById('resutl-container-html').innerHTML;
+            var text = document.getElementById('result-container-html').innerHTML;
             var mimeType = 'text/xhtml';
             var title = document.getElementById('quiztitle').innerText;
             downloadAsFile('<!DOCTYPE html><html><head><title>' + title + '</title></head><body>' + text + '</body></html>', mimeType, title + '.html');

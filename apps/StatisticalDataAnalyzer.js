@@ -21,7 +21,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
             If the text does not contain statistical data, simply response with 'No statistical data'.
             If there is statistical data, please extract them as a table (in markdown format) delimited by 4 equal marks ====.
             After that, please provide a YAML structure that represents a config for Chart.js library based on the following JSON schema:
-            ${JSON.stringify(this.getJSONSchma())}
+            ${JSON.stringify(this.getJSONSchema())}
 
             The YAML structure must be delimited by \`\`\`.
             After that list important trends in the extracted data if any.
@@ -121,7 +121,7 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
         </style>`;
   }
 
-  getJSONSchma() {
+  getJSONSchema() {
     return {
       "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "ChartConfig",

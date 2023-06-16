@@ -60,7 +60,7 @@ export class QuoteImageGenerator extends ConversationalApp {
         if(svg.includes('```')) {
             return (svg.split(/```\n*/i)[1] || svg).trim();
         }
-        return this.getStyles() + this.getJS() + '<button id="download-button" style="" onclick="downloadSVGAsFile()">Download</button><div id="resutl-container-svg" class="result-container">' + svg.trim() + '</div>';
+        return this.getStyles() + this.getJS() + '<button id="download-button" style="" onclick="downloadSVGAsFile()">Download</button><div id="result-container-svg" class="result-container">' + svg.trim() + '</div>';
     }
 
     getStyles() {
@@ -87,7 +87,7 @@ export class QuoteImageGenerator extends ConversationalApp {
     getJS() {
         return `<script>
         function downloadSVGAsFile() {
-            var text = document.getElementById('resutl-container-svg').innerHTML;
+            var text = document.getElementById('result-container-svg').innerHTML;
             // Create a Blob object from the text
             const blob = new Blob([text], { type: 'image/svg+xml' });
           
