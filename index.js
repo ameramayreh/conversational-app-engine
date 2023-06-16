@@ -51,6 +51,7 @@ app.get('/', (req, res) => {
             res.cookie('app', appName);
             res.writeHead(200, {'Content-Type': 'text/html'});
             let html = engines[appName].substituteText(data.toString());
+            html = html.replaceAll('{{APP_ID}}', appName);
             const appsList = Object.keys(engines).sort().map(k => ({
                 'app': k,
                 'name': engines[k].app.appName,
@@ -64,7 +65,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/script.js', (req, res) => {
-    const appName = getAppNameCookieValue(req);
+    const appName = getAppNameFromRequest(req);
     fs.readFile('client/script.js', (err, data) => {
         if (err) {
             res.writeHead(500, {'Content-Type': 'text/html'});
@@ -91,7 +92,7 @@ app.get('/style.css', (req, res) => {
 // API
 app.get('/api/userchats', async (req, res) => {
     const userid = req.query.userid;
-    const appName = getAppNameCookieValue(req);
+    const appName = getAppNameFromRequest(req);
     console.log("Recived [Get User Chats] from user: " + userid);
 
     if (!userid) {
@@ -107,7 +108,7 @@ app.get('/api/userchats', async (req, res) => {
 app.delete('/api/userchat', async (req, res) => {
     const userid = req.query.userid;
     const chatid = req.query.chatid;
-    const appName = getAppNameCookieValue(req);
+    const appName = getAppNameFromRequest(req);
     console.log("Received [Delete Chat: '" + chatid + "'] from user: " + userid);
 
     if (!userid) {
@@ -132,7 +133,7 @@ app.delete('/api/userchat', async (req, res) => {
 app.get('/api/chatmessages', async (req, res) => {
     const userid = req.query.userid;
     const chatid = req.query.chatid;
-    const appName = getAppNameCookieValue(req);
+    const appName = getAppNameFromRequest(req);
     console.log("Received [Get Chat: '" + chatid + "'] from user: " + userid);
 
     if (!userid) {
@@ -156,7 +157,7 @@ app.post('/api/chat', (req, res) => {
     const message = req.body.message;
     const userid = req.body.userid;
     const chatid = req.body.chatid;
-    const appName = getAppNameCookieValue(req);
+    const appName = getAppNameFromRequest(req);
     console.log("Received Message from user [" + userid + "], chat [" + chatid + "]: " + message);
 
     if (!userid) {
@@ -193,7 +194,11 @@ app.post('/api/chat', (req, res) => {
 app.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
-function getAppNameCookieValue(req) {
-    return req.headers.cookie.split(';').filter(c => c.trim().startsWith('app='))[0].split('=')[1].trim();
+function getAppNameFromRequest(req) {
+    let app = req.query?.app;
+    if (!app) {
+        app = req.headers?.cookie?.split(';').filter(c => c.trim().startsWith('app='))[0].split('=')[1].trim()
+    }
+    return app;
 }
 
