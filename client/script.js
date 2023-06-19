@@ -21,21 +21,55 @@ class ConversationalAppEngineClient {
         this.user = user;
         const appsList = window['appsList'] || [];
         this.app = appsList.find(a => a.current) || {};
-        this.messageField = document.getElementById("message");
         this.capacityIndecator = document.getElementById("capacity-indecator");
-        this.messageField.addEventListener("keypress", (event)=> {
-            if(event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                this.postMessage();
-                return false;
-            }
-        });
+        this.initMessageField();
         this.submitButton = document.getElementById("submitbutton");
         this.chatMessagesList = document.getElementById("chatmessages");
         this.chatsList = document.getElementById("chatslist");
         this.contentPreview = document.getElementById("contentpreview");
         this.messageform = document.getElementById("messageform");
         this.initSpeechRecognition();
+    }
+
+    initMessageField() {
+        this.messageField = document.getElementById("message");
+        this.messageField.addEventListener("keypress", (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                this.postMessage();
+                return false;
+            }
+        });
+
+        this.messageField.addEventListener("paste", (e) => {
+            // Prevent the default action
+            e.preventDefault();
+
+            // Get the copied text from the clipboard
+            const text = e.clipboardData
+                ? (e.originalEvent || e).clipboardData.getData('text/plain')
+                : // For IE
+                window.clipboardData
+                    ? window.clipboardData.getData('Text')
+                    : '';
+
+            if (document.queryCommandSupported && document.queryCommandSupported('insertText')) {
+                document.execCommand('insertText', false, text);
+            } else {
+                // Insert text at the current position of caret
+                const range = document.getSelection().getRangeAt(0);
+                range.deleteContents();
+
+                const textNode = document.createTextNode(text);
+                range.insertNode(textNode);
+                range.selectNodeContents(textNode);
+                range.collapse(false);
+
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        });
     }
 
     initSpeechRecognition() {
@@ -104,15 +138,15 @@ class ConversationalAppEngineClient {
 
     addMessage(message, messageClass, id, userName, userImageUrl, userIconName) {
         let messageUser = '';
-        if(userImageUrl) {
+        if (userImageUrl) {
             messageUser = `<img src="${userImageUrl}" class="message-user rounded-full w-8 h-8 absolute"/>`
-        } else if(userIconName) {
+        } else if (userIconName) {
             messageUser = `<i class="message-user material-icons rounded-full w-8 h-8 absolute text-gray-500">${userIconName}</i>`;
-        }  else if(userName) {
+        } else if (userName) {
             messageUser = `<div class="message-user absolute w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
             <span class="text-l text-gray-600" title="${userName}">${userName.toUpperCase()[0]}</span>
           </div>`;
-        } 
+        }
 
         this.chatMessagesList.innerHTML += "<li" + (id === undefined ? '' : ' id="' + id + '"') + " class='relative " + messageClass + "'>" + messageUser + message + "</li>";
         this.chatMessagesList.scrollTop = this.chatMessagesList.scrollHeight;
@@ -194,15 +228,15 @@ class ConversationalAppEngineClient {
         }
 
         if (response.usage) {
-           const usagePerc = Math.round(100 * Math.min(response.usage.total_tokens, MAX_TOKENS)/MAX_TOKENS);
-           this.capacityIndecator.style.width = usagePerc + '%';
-           this.capacityIndecator.title = 'Used ' + response.usage.total_tokens;
+            const usagePerc = Math.round(100 * Math.min(response.usage.total_tokens, MAX_TOKENS) / MAX_TOKENS);
+            this.capacityIndecator.style.width = usagePerc + '%';
+            this.capacityIndecator.title = 'Used ' + response.usage.total_tokens;
         }
-        
-        if(showPreviewButton) {
+
+        if (showPreviewButton) {
             responseMessage += '<div class="message-footer">' + showPreviewButton + '</div>';
         }
-        
+
         if (isNew && "speechSynthesis" in window && response.message) {
             speechSynthesis.speak(new SpeechSynthesisUtterance(response.message));
         } else {
@@ -212,9 +246,9 @@ class ConversationalAppEngineClient {
         if (id) {
             this.setCurrentContentMessage(this.contentList.length - 1);
         }
-        if(response?.usage?.total_tokens >= MAX_TOKENS) {
-             this.addMessage("Reached the maximun tokens count for a signle converation, sorry :(", this.mesageStyleClasses.error);
-             this.disableChat();
+        if (response?.usage?.total_tokens >= MAX_TOKENS) {
+            this.addMessage("Reached the maximun tokens count for a signle converation, sorry :(", this.mesageStyleClasses.error);
+            this.disableChat();
         }
     }
 
@@ -265,7 +299,7 @@ class ConversationalAppEngineClient {
         this.disableChat();
         this.messageform.classList.add('processing');
 
-        fetch(`${location.origin}/api/chat?app=${this.app.app}` , {
+        fetch(`${location.origin}/api/chat?app=${this.app.app}`, {
             method: "POST",
             body: JSON.stringify(data),
             headers: {
@@ -406,7 +440,7 @@ class CurrentUser {
 
     constructor(userTask) {
         this.userId = localStorage.getItem('chat-user-id');
-        if(!this.userId) {
+        if (!this.userId) {
             this.userId = Math.random().toString(36).substring(2, 15);
             localStorage.setItem('chat-user-id', this.userId);
         }
