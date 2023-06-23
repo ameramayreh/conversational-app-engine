@@ -238,7 +238,11 @@ class ConversationalAppEngineClient {
         }
 
         if (isNew && "speechSynthesis" in window && response.message) {
-            speechSynthesis.speak(new SpeechSynthesisUtterance(response.message));
+            const parsedHtml = new DOMParser().parseFromString(response.message, "text/html");
+            const text = parsedHtml.body.textContent || parsedHtml.body.innerText || "";
+            if(text.trim()) {
+                speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+            }
         } else {
             console.log("Text to Speech Not Available");
         }

@@ -1,6 +1,9 @@
 import { Configuration, OpenAIApi } from "openai";
 import * as fs from 'node:fs';
 
+const DATA_DIRECTORY_PATH = './data/';
+const APP_RESOURCES_DIRECTORY_PATH = './app-resources/';
+const APP_RESOURCES_WEB_BASE_PATH = '/app-resources/'
 export class ConversationalAppEngine {
     userMessages = {};
     openai = null;
@@ -8,15 +11,25 @@ export class ConversationalAppEngine {
     userMessages = {};
 
     constructor(appClass) {
+        const context = {
+            openai: this.openai
+        };
+        this.app = new appClass(context);
+        context.filesDirectoryPath = APP_RESOURCES_DIRECTORY_PATH + this.getFilesDirectoryName() + '/';
+        context.webBasePath = APP_RESOURCES_WEB_BASE_PATH + this.getFilesDirectoryName() + '/';
+
         this.openai = new OpenAIApi(new Configuration({
-            apiKey: process.env.OPENAI_API_KEY,
+            apiKey: process.env.OPENAI_API_KEY
         }));
 
-        this.app = new appClass();
         this.defaultMessages = this.app.getDefaultMessages();
 
-        if(!fs.existsSync('./data/')) {
-            fs.mkdirSync('./data/');
+        if (!fs.existsSync(DATA_DIRECTORY_PATH)) {
+            fs.mkdirSync(DATA_DIRECTORY_PATH);
+        }
+
+        if (!fs.existsSync(APP_RESOURCES_DIRECTORY_PATH + this.getFilesDirectoryName())) {
+            fs.mkdirSync(APP_RESOURCES_DIRECTORY_PATH + this.getFilesDirectoryName());
         }
 
         this.loadData();
@@ -33,7 +46,11 @@ export class ConversationalAppEngine {
     }
 
     getDataFileName() {
-        return 'data/' + this.app.constructor.name + '-data.json';
+        return DATA_DIRECTORY_PATH + this.app.constructor.name + '-data.json';
+    }
+
+    getFilesDirectoryName() {
+        return this.app.constructor.name;
     }
 
     storeData() {
@@ -70,9 +87,13 @@ export class ConversationalAppEngine {
 
         let i = 0;
         for (const message of chat.messages.slice(this.defaultMessages.length)) {
+            if (message.role == 'function' || message.function_call) {
+                continue;
+            }
+
             const msg = {
-                message: await Promise.resolve(this.app.getTextMessage(message.content)),
-                appContent: await Promise.resolve(this.app.getAppContent(message.content))
+                message: message.role == 'assistant' ? await Promise.resolve(this.app.getTextMessage(message.content)) : message.content,
+                appContent: message.role == 'assistant' ? await Promise.resolve(this.app.getAppContent(message.content)) : message.content
             };
 
             if (message.role == 'assistant') {
@@ -94,6 +115,7 @@ export class ConversationalAppEngine {
         const user = this.getUser(userid);
         const chat = this.getChat(user, chatid);
         const messages = chat.messages;
+        const availableFunctions = this.app.getAvailableFunctions();
 
         messages.push({ "role": "user", "content": message });
 
@@ -102,17 +124,23 @@ export class ConversationalAppEngine {
                 model: this.app.model,
                 temperature: this.app.temperature,
                 messages: messages,
+                functions: availableFunctions
             }).then(async (completion) => {
                 console.log("Received from ChatGPT: ");
                 console.log(JSON.stringify(completion.data));
-                const responseMessage = completion.data.choices[0].message.content;
+                let responseMessageObject = completion.data.choices[0].message;
 
+                if (responseMessageObject.function_call) {
+                    ({ responseMessageObject, completion } = await this.handleFunctionCall(responseMessageObject, availableFunctions, completion, messages));
+                }
+
+                const responseMessage = responseMessageObject.content;
                 let chatName = await Promise.resolve(this.app.getChatNameFromMessage(responseMessage, message, chat));
                 if (chatName) {
                     chat.name = chatName;
                 }
 
-                messages.push(completion.data.choices[0].message);
+                messages.push(responseMessageObject);
                 chat.usage.push(completion.data.usage);
                 this.storeData();
 
@@ -139,6 +167,42 @@ export class ConversationalAppEngine {
                 message: error.message || error
             }, null);
         }
+    }
+
+    async handleFunctionCall(responseMessageObject, availableFunctions, completion, messages) {
+        while (responseMessageObject.function_call) {
+            const functionName = responseMessageObject.function_call.name;
+            const hallucinatedFunctionMessages = [];
+            if (availableFunctions.find(f => f.name == functionName)) {
+                messages.push(responseMessageObject);
+                const functionParams = JSON.parse(responseMessageObject.function_call.arguments || '{}');
+                const functionResponse = await Promise.resolve(this.app.callFunction(responseMessageObject.function_call.name, functionParams));
+                messages.push({
+                    "role": "function",
+                    "name": functionName,
+                    "content": functionResponse || 'none'
+                });
+            } else {
+                hallucinatedFunctionMessages.push(responseMessageObject);
+                hallucinatedFunctionMessages.push({
+                    "role": "function",
+                    "name": functionName,
+                    "content": 'none'
+                });
+            }
+
+
+            completion = await Promise.resolve(this.openai.createChatCompletion({
+                model: this.app.model,
+                temperature: this.app.temperature,
+                messages: [...messages, ...hallucinatedFunctionMessages],
+                functions: availableFunctions
+            }));
+            console.log("Received from ChatGPT: ");
+            console.log(JSON.stringify(completion.data));
+            responseMessageObject = completion.data.choices[0].message;
+        }
+        return { responseMessageObject, completion };
     }
 
     substituteText(text) {

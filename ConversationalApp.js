@@ -13,9 +13,10 @@ class ConversationalApp {
 
     temperature = 1;
     model = 'gpt-3.5-turbo-0613';
-    modelMaxTokens =  4096;
+    modelMaxTokens = 4096;
 
-    constructor() {
+    constructor(context) {
+        this.context = context
     }
 
     /**
@@ -57,12 +58,12 @@ class ConversationalApp {
      * @returns 
      */
     getDialogText(responseMessage) { return responseMessage; }
-    
+
     /**
      * @deprecated use getDialogText instead
      */
     getTextMessage(responseMessage) { return this.getDialogText(responseMessage); }
-    
+
     /**
      * Returns formatted the app's business data that returned in OpenAI chat API's responseMessage (if any),
      * after excluding the normal conversation text.
@@ -72,6 +73,26 @@ class ConversationalApp {
      * @returns 
      */
     getAppContent(responseMessage) { return '<h1>No Content</h1>'; }
+
+
+    /**
+     * Returns a list of function descriptors that can be used by GPT based on the user input
+     * See the functions call api guide: https://platform.openai.com/docs/guides/gpt/function-calling
+     * @returns .
+     */
+    getAvailableFunctions() { return []; }
+
+    /**
+     * Execute the function logic and return the result.
+     * This method is called when GPT requests the result of a function.
+     * The app must implement the logic of the functions described in 
+     * the function descriptor returned by the getAvailableFunctions()
+     * 
+     * @param {*} functionName 
+     * @param {*} args 
+     * @returns string or promise that resolves to string
+     */
+    callFunction(functionName, args) { return 'none'; }
 
     parseYaml(yamlStr) {
         return yaml.load(yamlStr.replace(/```+[^\n]*\n?/g, ''));

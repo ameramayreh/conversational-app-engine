@@ -9,8 +9,8 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
 
   temperature = 0;
 
-  constructor() {
-    super();
+  constructor(context) {
+    super(context);
   }
 
   getDefaultMessages() {

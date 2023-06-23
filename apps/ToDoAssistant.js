@@ -6,8 +6,8 @@ export class ToDoAssistant extends ConversationalApp {
     newChatLabel = 'New To-Do';
     appIconName = 'fact_check';
 
-    constructor() {
-        super();
+    constructor(context) {
+        super(context);
     }
 
     getDefaultMessages() {

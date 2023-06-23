@@ -25,9 +25,9 @@ To use Conversational App Engine, you will need to have Node.js and npm installe
 
 Next, set the environment variable OPENAI_API_KEY to your OpenAI API key. This will allow Conversational App Engine to authenticate your requests to the API.
 
-To implement your own app, create a new class in the apps directory that extends the ConversationApp class. You will need to implement several methods, such as getInstructionMessages, getChatNameFromMessage, and getDialogText, to define your app's behavior. You can also overwrite any of the default messages, such as appName and chatListTitle, to customize the user interface.
+To implement your own app, create a new class that extends the ConversationApp class and save it in the `apps` directory. You will need to implement several methods, such as `getInstructionMessages`, `getChatNameFromMessage`, `getDialogText`, `getAvailableFunctions`, and, `callFunction` to define your app's behavior. You can also overwrite any of the default messages, such as appName and chatListTitle, to customize the user interface.
 
-Once you have created your app, import it into the index.js file and use it to initialize a new instance of ConversationalAppEngine. Then, run node ./index.js in the project directory and navigate to http://localhost:3000/ to see your app in action.
+Once you have created your app, and stored it under the `apps` directory. Then, run `node ./index.js` in the project directory and navigate to http://localhost:3000/ , and select your app from the side bar menu to see your app in action.
 
 ## Prerequisites
 * [An OpenAI API Key](https://platform.openai.com/account/api-keys)
@@ -44,13 +44,13 @@ git clone https://github.com/david-m-s/conversational-app-engine.git
 cd conversational-app-engine
 npm install
 ```
-If you don't have git installed. You can download the project [here](https://github.com/ameramayreh/conversational-app-engine/archive/refs/heads/main.zip)
+If you don't have git installed. You can download and extract the project [here](https://github.com/ameramayreh/conversational-app-engine/archive/refs/heads/main.zip)
 
 ## [3] Implement your app [Optional]
 See [Create your App](#create-your-app).
 
 ## [4] Run your project
-1- Run node ./index.js in the project directory
+1- Run `node ./index.js` in the project directory
 
 2- Navigate to http:/localhost:3000/
 
@@ -134,14 +134,14 @@ export class SpellAndGrammarChecker extends ConversationalApp {
 - getInstructionMessages: 
 Returns a list of messages that till OpenAI chat API about its role in the conversation, the expected user input, how to process it, and, what is the expected response (see [OpenAI guide](https://platform.openai.com/docs/guides/chat/introduction)). It can also includes examples about the user input and/or expected response.
 Each message is an object that contains a role and content properties: `{"role": "...", "content": "..."}`
-The `role` of first message should be "system", and the `content` is a high level description of OpenAI chat API's role in this conversation. Then it followed by one or more messages with the "user" `role`, that tells OpenAI chat API how to process and response to the user input.
+The `role` of first message should be "system", and the `content` is a description of the role of the app and what expected from it to do and how to process and response to the user input.
 You may add a last message with role "assistant", where you ask the user to provide input.
 
 ```js
 getInstructionMessages() {
     return [
-        {"role": "system", "content": "You are a spell and grammar checker. You can help with identifying different types of mistakes in a text."},
-        {"role": "user", "content": `Provided with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
+        {"role": "system", "content": `You are a spell and grammar checker. You can help with identifying different types of mistakes in a text.
+        User will provide you with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
         the resulting text must be delimited by "\`\`\`".
         Example:
         Input: "I use grammer checker"
@@ -156,7 +156,7 @@ getInstructionMessages() {
 ```
 
 - getChatNameFromMessage:
-Returns the title of the chat, this can be derived from OpenAI chat API's responseMessage, especially if you instruct to include it in the response in the default messages. If no title can be derived from the message you can return a constant value. Or return null to keep the previous chat title.
+Returns the title of the chat, this can be derived from OpenAI chat API's responseMessage, especially if you instruct to include it in the response in the instruction messages. If no title can be derived from the message you can return a constant value. Or return null to keep the previous chat title.
 
 ```js
 getChatNameFromMessage(responseMessage) {
@@ -169,7 +169,7 @@ Returns the normal conversation text returned in OpenAI chat API's responseMessa
 
 ```js
 getDialogText(responseMessage) {
-    let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+    let messageParts = responseMessage.split(/^```+[^\n]*\n?/m);
     let result = (messageParts[0] || '').trim();
     result += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
     return result;
@@ -177,12 +177,12 @@ getDialogText(responseMessage) {
 ```
 
 - getAppContent:
-Returns formatted the app's business data that returned in OpenAI chat API's responseMessage (if any), after excluding the normal conversation text. Usually you will format the app's business data as HTML along with any needed css and js (local and included).
+Returns formatted app's business data that returned in OpenAI chat API's responseMessage (if any), after excluding the normal conversation text. Usually you will format the app's business data as HTML along with any needed css and js (local and libraries).
 
 ```js
 // Extracted some of the method logic in a separate method getStyles
 getAppContent(responseMessage) {
-    let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+    let messageParts = responseMessage.split(/^```+[^\n]*\n?/m);
     const text = messageParts[1];
     if(!text) {
         return null;
@@ -220,8 +220,10 @@ getStyles() {
 - newChatLabel
 - newChatName
 - contentPreviewPlaceholder
-- appIconName: google material icon name
+- appIconName: google material icon name (default: token)
 - chatStartInstruction
+- model: openai chat model id (default gpt-3.5-turbo-0613)
+- temperature: openai temperature parameter
 
 ```js
 appName = 'Spell and Grammar Checker';
@@ -250,8 +252,8 @@ export class SpellAndGrammarChecker extends ConversationalApp {
 
     getInstructionMessages() {
         return [
-            {"role": "system", "content": "You are a spell and grammar checker. You can help with identifying different types of mistakes in a text."},
-            {"role": "user", "content": `Provided with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
+            {"role": "system", "content": `You are a spell and grammar checker. You can help with identifying different types of mistakes in a text.
+            User will provide you with a text, find the grammar and spelling mistakes, return the same text with the mistakes surround with <span> tag with a title attribute that contains the mistakes description.
             the resulting text must be delimited by "\`\`\`".
             Example:
             Input: "I use grammer checker"
@@ -269,14 +271,14 @@ export class SpellAndGrammarChecker extends ConversationalApp {
     }
 
     getDialogText(responseMessage) {
-        let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+        let messageParts = responseMessage.split(/^```+[^\n]*\n?/m);
         let result = (messageParts[0] || '').trim();
         result += '\n' + (messageParts.length <= 2 ? '' : messageParts.slice(2).join('\n').trim());
         return result;
     }
 
     getAppContent(responseMessage) {
-        let messageParts = responseMessage.split(/```+[^\n]*\n?/);
+        let messageParts = responseMessage.split(/^```+[^\n]*\n?/m);
         const text = messageParts[1];
         if(!text) {
             return null;

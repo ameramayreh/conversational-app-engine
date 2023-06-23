@@ -10,8 +10,8 @@ export class ConversationalAppCreator extends ConversationalApp {
     model =  "gpt-4";
     modelMaxTokens =  8192;
 
-    constructor() {
-        super();
+    constructor(context) {
+        super(context);
     }
 
     getDefaultMessages() {
@@ -43,8 +43,8 @@ class ConversationalApp {
 
     temperature = 1;
 
-    constructor() {
-        super();
+    constructor(context) {
+        super(context);
     }
 
     /**
@@ -278,8 +278,8 @@ export class StatisticalDataAnalyzer extends ConversationalApp {
     chatStartInstruction = 'Please provide me with the data you want to analyze';
     appIcon = "insert_chart";
 
-    constructor() {
-        super();
+    constructor(context) {
+        super(context);
     }
 
     // Instructions to OpenAI GPT
@@ -409,8 +409,8 @@ export class ToDoAssistant extends ConversationalApp {
     newChatLabel = 'New To-Do';
     appIconName = 'fact_check';
 
-    constructor() {
-        super();
+    constructor(context) {
+        super(context);
     }
 
     getInstructionMessages() {
