@@ -82,9 +82,12 @@ Note: The statement highlighted with red rectangle is not accurate, the app clas
 
 ## Story Telling
 The Story Telling app generates a story chapter by chapter with an image generated for each chapter, taking into account the user's age and the requested topic. 
+
 To generate an image for each chapter of the story, the app utilizes the [function calling feature](https://platform.openai.com/docs/guides/gpt/function-calling) of the OpenAI chat API.
 
 For image generation, the app relies on the service provided by (stability.ai)[https://platform.stability.ai/]. Therefore, in order to use this app, it is necessary to have a stability.ai API key set in the `STABILITY_API_KEY` environment variable.
+
+![Story Telling App](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/478acca1-6f71-47e9-bd46-af95f4284007)
 
 
 
