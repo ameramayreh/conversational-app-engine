@@ -116,7 +116,8 @@ The following sequence diagram shows the messages between the user, Conversation
 
 
 The following sequence diagram shows the messages between the user, Conversational App Engine, your App and OpenAI Chat API in a single chat thread.
-![app-sequence](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/82a1ed2a-43a2-44ea-b0bd-2de31ec39e66)
+![app-sequence-v2](https://github.com/ameramayreh/conversational-app-engine/assets/129025554/bbb35344-d7a8-4b9c-8d86-ab166ad2445d)
+
 
 Please follow the steps below to implement your app:
 
@@ -220,9 +221,9 @@ getStyles() {
 - newChatLabel
 - newChatName
 - contentPreviewPlaceholder
-- appIconName: google material icon name (default: token)
+- appIconName: google material icon name (default: `token`)
 - chatStartInstruction
-- model: openai chat model id (default gpt-3.5-turbo-0613)
+- model: openai chat model id (default: `gpt-3.5-turbo-0613`)
 - temperature: openai temperature parameter
 
 ```js
