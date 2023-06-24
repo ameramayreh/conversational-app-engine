@@ -1,5 +1,5 @@
 # About
-Conversational App Engine is a free engine that helps developers prototype chat-based apps quickly using OpenAI's chat completion API. With Conversational App Engine, developers can focus on designing their app's functionality while utilizing the power of Conversational App Engine to handle chat management.
+Conversational App Engine helps developers prototype chat-based apps quickly using OpenAI's chat completion API. With Conversational App Engine, developers can focus on designing their app's functionality while utilizing the power of Conversational App Engine to handle chat management.
 
 A Conversational App, running on Conversational App Engine, utilizes OpenAI's chat completion API to generate textual data based on user input. It then processes the generated data and presents it in a more useful visual format, usually. For detailed technical information about creating a Conversational App, please refer to the [Create your App](#create-your-app) section.
 
