@@ -80,7 +80,7 @@ class ConversationalApp {
      * See the functions call api guide: https://platform.openai.com/docs/guides/gpt/function-calling
      * @returns .
      */
-    getAvailableFunctions() { return []; }
+    getAvailableFunctions() { return undefined; }
 
     /**
      * Execute the function logic and return the result.
