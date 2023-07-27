@@ -41,7 +41,8 @@
 #appsmenu .material-icons {
     font-size: var(--appsmenu-icon-size);
     line-height: var(--appsmenu-icon-size);
-
+    width: var(--appsmenu-icon-size);
+    height: var(--appsmenu-icon-size);
 }
 
 .chat-item .material-icons {

@@ -11,6 +11,10 @@ export class ConversationalAppEngine {
     userMessages = {};
 
     constructor(appClass) {
+        this.openai = new OpenAIApi(new Configuration({
+            apiKey: process.env.OPENAI_API_KEY
+        }));
+        
         const context = {
             openai: this.openai
         };
@@ -18,9 +22,6 @@ export class ConversationalAppEngine {
         context.filesDirectoryPath = APP_RESOURCES_DIRECTORY_PATH + this.getFilesDirectoryName() + '/';
         context.webBasePath = APP_RESOURCES_WEB_BASE_PATH + this.getFilesDirectoryName() + '/';
 
-        this.openai = new OpenAIApi(new Configuration({
-            apiKey: process.env.OPENAI_API_KEY
-        }));
 
         this.defaultMessages = this.app.getDefaultMessages();
 
