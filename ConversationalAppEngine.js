@@ -8,7 +8,6 @@ export class ConversationalAppEngine {
     userMessages = {};
     openai = null;
     defaultMessages = [];
-    userMessages = {};
 
     constructor(appClass) {
         this.openai = new OpenAIApi(new Configuration({
@@ -55,7 +54,7 @@ export class ConversationalAppEngine {
     }
 
     storeData() {
-        const json = JSON.stringify(this.userMessages);
+        const json = JSON.stringify(this.userMessages, null, 2);
         fs.writeFile(this.getDataFileName(), json, 'utf8', (error) => {
             if (error) {
                 console.log("Error: " + error);
@@ -128,7 +127,7 @@ export class ConversationalAppEngine {
                 functions: availableFunctions
             }).then(async (completion) => {
                 console.log("Received from ChatGPT: ");
-                console.log(JSON.stringify(completion.data));
+                console.log(JSON.stringify(completion.data, null, 2));
                 let responseMessageObject = completion.data.choices[0].message;
 
                 if (responseMessageObject.function_call) {
